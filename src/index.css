@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  font-family: "Public Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: "Public Sans", sans-serif;
+}
+
+.inputRounded .css-md26zr-MuiInputBase-root-MuiOutlinedInput-root {
+  border-radius: 50px;
+}

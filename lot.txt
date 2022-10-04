@@ -1,0 +1,46 @@
+Yashoda Hospitals
+Heart Specialists
+Yashoda@gmail.com
+Yashoda@g
+Surgical Department
+9876543210
+Alexander Rd, Shivaji Nagar, Secunderabad, Telangana 500003
+17.445451002449293, 78.49789573389134
+
+
+Sunshine Hospitals
+child specialist
+Sunshine@gmail.com
+Sunshine@g
+Pharmacy Department
+9876543210
+ 45, Survey No. 40 46,, 7-56/19, Dargah Rd, LIG Chitrapuri Colony, Prashant Hills, Gachibowli, Telangana 500032
+17.421351941894155, 78.38524270570403
+
+Medicover Hospitals
+Anesthesiology
+Medicover@gmail.com
+Medicover@g
+Paramedical Department
+9876543210
+behind Cyber Towers, In the Lane of IBIS Hotels, HUDA Techno Enclave, HITEC City, Hyderabad, Telangana 500081
+17.447070309046243, 78.38011546415456
+
+Mahatma Gandhi Cancer Hospital & Research Institute
+Oncologists
+MahatmaGandhi@gmail.com
+MahatmaGandhi@g
+Radiology Department
+9876543210
+Plot No:1, Sector:7, MVP Colony, Visakhapatnam, Andhra Pradesh 530017
+18.04792014315406, 83.37456634870043
+
+
+Apollo Hospitals & Cancer Unit Health City 
+Clinical Immunology
+Apollo@gmail.com
+Apollo@g
+Physical Medicine
+9876543210
+Visakhapatnam, Health City, Arilova, Chinagadila, Andhra Pradesh 530040
+17.8479021636797, 83.29331114105648
