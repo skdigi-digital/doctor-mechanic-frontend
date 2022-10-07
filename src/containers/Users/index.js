@@ -3,9 +3,9 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import Datatable from "../../components/datatable";
 import { loadUsers } from "../../store/actions/users";
-// import DeleteModal from "../../components/deletemodal/deleteModal";
-// import axios from "axios";
-// import { deleteNotificationApi } from "../../constant";
+import DeleteModal from "../../components/deletemodal/deleteModal";
+import axios from "axios";
+import { deleteNotificationApi } from "../../constant";
 const headers = [
   {
     id: "first_name",
@@ -50,7 +50,6 @@ export class LoginUsers extends Component {
 
   componentDidMount() {
     const { getUser, Login } = this.props;
-    console.log("editusertoken",Login.data.response.token);
     getUser({ token: Login.data.response.token });
     this.setState({token:Login.data.response.token })
   }
@@ -61,7 +60,6 @@ export class LoginUsers extends Component {
         this.setState({ open: true });
        
       } else if (value === "edit") {
-        console.log(selected,"select");
         this.setState({ open: true, selected: selected });
       } else {
         this.setState({
@@ -72,65 +70,65 @@ export class LoginUsers extends Component {
       }
     });
   };
-  // deletenotification = async () => {
-  //   this.setState({ deleteBackdrop: true });
-  //   try {
-  //     const { Login, getNotificationsList } = this.props;
-  //     const headers = {
-  //       "Content-Type": "application/x-www-form-urlencoded",
-  //       token: Login.data.token,
-  //     };
+  deletenotification = async () => {
+    this.setState({ deleteBackdrop: true });
+    try {
+      const { Login, getNotificationsList } = this.props;
+      const headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        token: Login.data.response.token,
+      };
+      const notification = {
+        customer_id: this.state.selected[0],
+      };
+      const data = Object.keys(notification)
+        .map((key) => `${key}=${encodeURIComponent(notification[key])}`)
+        .join("&");
 
-  //     const notification = {
-  //       notification_id: this.state.selected[0],
-  //     };
-
-  //     const data = Object.keys(notification)
-  //       .map((key) => `${key}=${encodeURIComponent(notification[key])}`)
-  //       .join("&");
-
-  //     const notificationDelete = await axios({
-  //       method: "post",
-  //       url: deleteNotificationApi,
-  //       data: data,
-  //       headers: headers,
-  //     });
-  //     if (notificationDelete.data.status === 200) {
-  //       this.setState({
-  //         deleteBackdrop: false,
-  //         errorType: "success",
-  //         message: notificationDelete.data.message,
-  //         alert: true,
-  //       });
-  //       getNotificationsList({ token: Login.data.token });
-  //       this.handleDeleteModal(false);
-  //     } else if (
-  //       notificationDelete.data.status === 201 ||
-  //       notificationDelete.data.status === 500
-  //     ) {
-  //       this.setState({
-  //         deleteBackdrop: false,
-  //         errorType: "error",
-  //         message: notificationDelete.data.message,
-  //         alert: true,
-  //       });
-  //     } else {
-  //       this.setState({
-  //         deleteBackdrop: false,
-  //         errorType: "error",
-  //         message: "Error!, Please contact your Administrator!!",
-  //         alert: true,
-  //       });
-  //     }
-  //   } catch (error) {
-  //     this.setState({
-  //       deleteBackdrop: false,
-  //       errorType: "error",
-  //       message: "Error!, Please contact your Administrator!!",
-  //       alert: true,
-  //     });
-  //   }
-  // };
+      const notificationDelete = await axios({
+        method: "delete",
+        url: deleteNotificationApi,
+        data: data,
+        headers: headers,
+      });
+      
+      
+      if (notificationDelete.data.status === 200) {
+        this.setState({
+          deleteBackdrop: false,
+          errorType: "success",
+          message: notificationDelete.data.message,
+          alert: true,
+        });
+        getNotificationsList({ token: Login.data.response.token });
+        this.handleDeleteModal(false);
+      } else if (
+        notificationDelete.data.status === 201 ||
+        notificationDelete.data.status === 500
+      ) {
+        this.setState({
+          deleteBackdrop: false,
+          errorType: "error",
+          message: notificationDelete.data.message,
+          alert: true,
+        });
+      } else {
+        this.setState({
+          deleteBackdrop: false,
+          errorType: "error",
+          message: "Error!, Please contact your Administrator!!",
+          alert: true,
+        });
+      }
+    } catch (error) {
+      this.setState({
+        deleteBackdrop: false,
+        errorType: "error",
+        message: "Error!, Please contact your Administrator!!",
+        alert: true,
+      });
+    }
+  };
   handleModal = (value) => {
     this.setState({ open: value }, () => {
       if (this.state.open === false) {
@@ -168,7 +166,6 @@ export class LoginUsers extends Component {
       selectBol,
       token,
     } = this.state;
-    
     return (
       <div style={{ marginTop: 30 }}>
         <Datatable
@@ -187,7 +184,7 @@ export class LoginUsers extends Component {
           selected={selected}
           token={token}
         />  
-        {/* <DeleteModal
+        <DeleteModal
           openModal={deleteModal}
           name={selectedName}
           backdropOpen={deleteBackdrop}
@@ -198,7 +195,7 @@ export class LoginUsers extends Component {
           errorType={errorType}
           message={message}
           alert={alert}
-        /> */}
+        />
       </div>
     );
   }

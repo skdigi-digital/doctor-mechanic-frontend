@@ -17,8 +17,10 @@ export const addservice = baseUrl +"service/addservice"; //"service/createservic
 export const adduserApi = baseUrl + "user";
 export const usersListApi = baseUrl + "customers/customerlist";
 
+
 export const studentsListApi = baseUrl + "loginUsers";
 export const notificationLsitApi = baseUrl + "notification/getnotifications";
+
 
 export const employeesListApi = baseUrl + "employees";
 
@@ -28,6 +30,7 @@ export const editcourseApi = baseUrl + "updatecourse";
 
 export const createUser = baseUrl +"customers/customersignup"; //"user/createuser";
 export const updateUser = baseUrl +"customers/editcustomer";//"user/updateuser";
+export const deleteNotificationApi = baseUrl +"customers/deletecustomer";//delete user
 
 export const addexamApi = baseUrl + "exam";
 export const examListApi = baseUrl + "exam";

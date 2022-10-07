@@ -27,9 +27,8 @@ export const admin = [
   {
     id: 5,
     name: "Vendor",
-    icon: "",
+    icon: "add_business",
     path: "/vendor",
-
   },
   {
     id: 6,
@@ -40,7 +39,7 @@ export const admin = [
   {
     id: 7,
     name: "Notification",
-    icon: "",
+    icon: "notifications_none",
     path: "/notification",
   },
 ];

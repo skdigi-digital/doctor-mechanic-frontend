@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import PropTypes from "prop-types";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
@@ -8,12 +8,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import { loadUsers } from "../../store/actions/users";
 // import { loadExams } from "../../store/actions/exam";
 import DialogActions from "@mui/material/DialogActions";
-import { FormControl, InputLabel } from "@mui/material";
+import { FormControl, InputLabel,InputAdornment } from "@mui/material";
 import {
   styled,
   useTheme,
@@ -104,15 +106,15 @@ BootstrapDialogTitle.propTypes = {
 };
 
 function Examdetails(props) {
- 
   const [usersObject, setUsersObject] = React.useState({
     email: "",
     password: "",
     phone: "",
     first_name: "",
     last_name: "",
-    addresses: "",
+    showPassword: false,
   });
+
   const [backdropOpen, setBackdropOpen] = React.useState(false);
   const [alert, setAlert] = React.useState(false);
   const [errorType, setErrorType] = React.useState("");
@@ -125,10 +127,11 @@ function Examdetails(props) {
     selected,
     Users,
     token,
-    
+
   } = props;
-  
-  
+  console.log("Im inside the delete button",props)
+
+
   const vertical = "bottom";
   const horizontal = "center";
   const theme = useTheme();
@@ -146,7 +149,7 @@ function Examdetails(props) {
     setBackdropOpen(true);
 
     if (usersObject._id) {
-     
+
       const dataObject = {
         email: usersObject.email,
         password: usersObject.password,
@@ -154,35 +157,35 @@ function Examdetails(props) {
         first_name: usersObject.first_name,
         last_name: usersObject.last_name,
         addresses: usersObject.addresses,
- 
+
       };
-    
+
       const headers = {
         "Content-Type": "application/json",
-       token: token,
-       
-        
+        token: token,
+
+
       };
       try {
         const edituser = await axios({
           method: "put",
-          url: updateUser +"/"+ usersObject._id,
+          url: updateUser + "/" + usersObject._id,
           data: dataObject,
           headers: headers,
         });
-        console.log(headers,"head");
-        console.log(edituser.data,"eded");
+        console.log(headers, "head");
+        console.log(edituser.data, "eded");
         //console.log("logrok",Login.data.response.token );
         if (edituser.data.status === 200) {
-         //getUsersList({ token: Login.data.response.token });
-         //   Vendorlogin.data.token 
-          
+          //getUsersList({ token: Login.data.response.token });
+          //   Vendorlogin.data.token 
+
           setBackdropOpen(false);
           handleClose();
           setErrorType("success");
           setMessage(edituser.data.message);
           setAlert(true);
-          console.log(getUsersList,"getuser");
+          console.log(getUsersList, "getuser");
         } else if (edituser.data.status === 401) {
           setBackdropOpen(false);
           handleClose();
@@ -211,19 +214,18 @@ function Examdetails(props) {
           last_name: usersObject.last_name,
           addresses: usersObject.addresses,
         };
-       
+
         const headers = {
           "Content-Type": "application/json",
-          
         };
-        
+
         const adduser = await axios({
           method: "post",
           url: createUser,
           data: dataObject,
           headers: headers,
         });
-        console.log(adduser.data,"adduser");
+        console.log(adduser.data, "adduser");
         if (adduser.data.status === 200) {
           //getUsersList({ token: Vendorlogin.data.token });
           setBackdropOpen(false);
@@ -259,7 +261,6 @@ function Examdetails(props) {
   const handleClose = () => {
     handleModelClose(false);
     setUsersObject({
-      
       email: "",
       password: "",
       phone: "",
@@ -267,7 +268,7 @@ function Examdetails(props) {
       last_name: "",
       addresses: "",
     });
-    
+
   };
   console.log(usersObject);
   const themeColor = createTheme({
@@ -338,12 +339,17 @@ function Examdetails(props) {
                   <TextField
                     id="outlined-textarea"
                     label="Password"
-                    placeholder="Enter Password"
-                    multiline
+                    placeholder="Enter password"
+                    type={usersObject.showPassword ? "text" : "password"}
                     fullWidth
                     value={usersObject.password}
                     onChange={(e) => handleChange("password", e)}
                     style={{ margin: 10 }}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        {usersObject.showPassword ? <VisibilityOff /> : <Visibility />}
+                      </InputAdornment>
+                    }
                   />
                 </Grid>
                 <Grid item xs={6} md={6}>

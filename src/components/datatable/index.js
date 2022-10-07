@@ -1,6 +1,7 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import { alpha } from "@mui/material/styles";
+import "./styles.css";
 import {
   Box,
   Table,
@@ -49,7 +50,7 @@ import EditRoundedIcon from "@mui/icons-material/EditRounded";
 //   createData("Nougat", 360, 19.0, 9, 37.0),
 //   createData("Oreo", 437, 18.0, 63, 4.0),
 // ];
-const rajesh = "visible";
+const added = "visible";
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -97,7 +98,7 @@ function EnhancedTableHead(props) {
   };
 
   return (
-    <TableHead>
+    <TableHead className="main">
       <TableRow>
         <TableCell padding="checkbox">
           <Checkbox
@@ -154,7 +155,7 @@ const EnhancedTableToolbar = (props) => {
     selectedName,
     displayaddbutton,
   } = props;
-
+  console.log("Im the Props of EnhancedTableTooar",props)
   const addButton = () => {
     handleButtonClick("add");
   };
@@ -168,10 +169,10 @@ const EnhancedTableToolbar = (props) => {
   };
 
   return (
-    <Toolbar
+    <Toolbar className="rose"
       sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
+        pl: { sm: 2,bgcolor:"violet" },
+        pr: { xs: 1, sm: 1,bgcolor:"violet" },
         ...(numSelected > 0 && {
           bgcolor: (theme) =>
             alpha(
@@ -192,7 +193,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography
-          sx={{ flex: "1 1 100%" }}
+          sx={{ flex: "1 1 100%", }}
           variant="h6"
           id="tableTitle"
           component="div"
@@ -201,16 +202,16 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       )}
 
-      {numSelected > 0 && rajesh === displayaddbutton ? (
+      {numSelected > 0 && added === displayaddbutton ? (
         <div style={{ display: "flex" }}>
           {numSelected <= 1 ? (
-            <Tooltip title="Edit" onClick={editButton}>
+            <Tooltip title="Edit" onClick={editButton} >
               <IconButton color="warning">
                 <EditRoundedIcon />
               </IconButton>
             </Tooltip>
           ) : null}
-          <Tooltip title="Delete" onClick={delButton}>
+          <Tooltip title="Delete" onClick={delButton} >
             <IconButton color="error">
               <DeleteRoundedIcon />
             </IconButton>
@@ -218,7 +219,7 @@ const EnhancedTableToolbar = (props) => {
         </div>
       ) : (
         <div style={{ display: "flex" }}>
-          {rajesh === displayaddbutton ? (
+          {added === displayaddbutton ? (
             <Tooltip title="Add" onClick={addButton}>
               <IconButton color="primary">
                 <AddCircleRoundedIcon />
@@ -247,7 +248,7 @@ export default function Datatable(props) {
   const [selected, setSelected] = React.useState([]);
   const [selectedName, setSelectedName] = React.useState([]);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(8);
   const {
     headCell,
     data,
@@ -305,7 +306,7 @@ export default function Datatable(props) {
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setRowsPerPage(parseInt(event.target.value,8));
     setPage(0);
   };
 
@@ -317,7 +318,7 @@ export default function Datatable(props) {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 2 }}>
+      <Paper sx={{ width: "100%", mb: 2 }} >
         <EnhancedTableToolbar
           numSelected={selected.length}
           header={props.name}
@@ -327,12 +328,12 @@ export default function Datatable(props) {
           displayaddbutton={displayaddbutton}
         />
         <TableContainer>
-          <Table
+          <Table 
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size="medium"
           >
-            <EnhancedTableHead
+            <EnhancedTableHead 
               header={props.headCell}
               numSelected={selected.length}
               order={order}
@@ -355,7 +356,7 @@ export default function Datatable(props) {
                   };
 
                   return (
-                    <TableRow
+                    <TableRow 
                       hover
                       onClick={(event) => {
                         callback();
@@ -386,7 +387,7 @@ export default function Datatable(props) {
                         </TableCell>
                       )}
                       {headCell[1] && (
-                        <TableCell
+                        <TableCell 
                           align={headCell[1].numeric ? "right" : "left"}
                         >
                           {row[headCell[1].id]}
@@ -429,7 +430,7 @@ export default function Datatable(props) {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[8 , 16, 24]}
           component="div"
           count={data.length}
           rowsPerPage={rowsPerPage}

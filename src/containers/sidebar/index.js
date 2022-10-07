@@ -1,5 +1,5 @@
 import * as React from "react";
-import "./sidebar.css";
+import "./sidebar.css"
 import { styled } from "@mui/material/styles";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -14,7 +14,7 @@ import {
   Box,
   ListItemIcon,
   ListItemText,
-  Avatar,  
+  Avatar,
   Badge,
   IconButton,
 } from "@mui/material";
@@ -29,9 +29,7 @@ import Dashboard from "../dashboard";
 
 import { vendor, admin } from "../../restriction";
 import { connect } from "react-redux";
-
 import Users from "../Users";
-
 import Vendor from "../Vendor";
 import Service from "../Service";
 import Admin from "../Admin";
@@ -80,8 +78,9 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
+  //background color of top searchbar& notification
   backgroundColor: "transparent",
-  backdropFilter: "blur(3px)",
+  paddingTop:15,
   transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -131,12 +130,12 @@ function Sidebar(props) {
   const { Login, Vendorlogin } = props;
 
   console.log(props);
- 
+
   React.useEffect(() => {
-    console.log("login",Login);
+    console.log("login", Login);
     if (Login.data.response && Login.data.response.status === 200) {
       setSideBar(admin);
-     
+
     } else if (Vendorlogin.data.status === 200) {
       setSideBar(vendor);
     }
@@ -164,18 +163,21 @@ function Sidebar(props) {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{
+      display: "flex",
+    }} >
       <CssBaseline />
-      <AppBar position="fixed" open={open} elevation={0}>
+      <AppBar  open={open} elevation={0}>
         <Toolbar style={styles.toolbar}>
           <IconButton>
-            <SearchIcon color="action" sx={{ fontSize: 30}} />
+            <SearchIcon color="action" sx={{ fontSize: 30,ml :5}} />
           </IconButton>
           <div
             style={{
               display: "flex",
               justifyContent: "space-between",
               width: "30%",
+              background:"transparent",
             }}
           >
             <IconButton>
@@ -210,11 +212,11 @@ function Sidebar(props) {
         variant="permanent"
         anchor="left"
       > */}
-      <div style={{border:"2px"}}>
-        <Toolbar>
-          <img src={logo} alt="logo" style={{ height: 80, zIndex: "2"}} />
+      <div style={{ border: "2px" }} className="main" >
+        <Toolbar className="sizing" >
+          <img src={logo} alt="logo" style={{ height: 80, zIndex: "2" }} />
         </Toolbar>
-        <List style={{ marginLeft: 20, zIndex: "1" }}>
+        <List style={{ marginLeft: 15, zIndex: "1" }}>
           {sideBar.map((text, index) => (
             <ListItem
               button
@@ -229,11 +231,11 @@ function Sidebar(props) {
             </ListItem>
           ))}
         </List>
-      {/* </Drawer> */}
-            </div>
+        {/* </Drawer> */}
+      </div>
       <Box
         component="main"
-        sx={{ flexGrow: 1, bgcolor: "background.default", p: 5 }}
+        sx={{ flexGrow: 1, p: 5 }}
       >
         <Router>
           <Route exact path="/dashboard" component={Dashboard} />
@@ -242,7 +244,7 @@ function Sidebar(props) {
           <Route exact path="/service" component={Service} />
           <Route exact path="/admin" component={Admin} />
           <Route exact path="/notification" component={Notification} />
-          <Route exact path="/orders" component={Orderslist}></Route>
+          <Route exact path="/orders" component={Orderslist}/>
         </Router>
       </Box>
     </Box>
@@ -257,7 +259,7 @@ const styles = {
   toolbar: {
     display: "flex",
     justifyContent: "space-between",
-    width: "97%",
+    width: "98%",
   },
 };
 
