@@ -8,6 +8,7 @@ export const vendorloginUrl = baseUrl + "vendor/signin";
 export const vendorlist = baseUrl + "vendor/getAllVendors";//listvendors";
 export const updatevendorlist = baseUrl + "vendor/updatevendor";
 export const addvendorlist = baseUrl + "vendor/createvendor";
+export const deleteVendor = baseUrl + "vendor/deleteVendor";
 
 export const servicelist = baseUrl + "service/servicelist";
 export const updateservice = baseUrl + "service/updateservice";
@@ -21,7 +22,8 @@ export const studentsListApi = baseUrl + "loginUsers";
 export const notificationLsitApi = baseUrl + "notification/getnotifications";
 
 
-export const employeesListApi = baseUrl + "employees";
+export const employeesListApi = baseUrl + "employee/employeelist";
+export const addemployees = baseUrl + "employee/addemployee";
 
 export const addcourseApi = baseUrl + "course";
 export const coursesListApi = baseUrl + "course";

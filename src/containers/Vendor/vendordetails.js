@@ -30,7 +30,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 // web.cjs is required for IE11 support
 import { useSpring, animated } from "react-spring";
-import { addvendorlist, updatevendorlist } from "../../constant";
+import { addvendorlist, updatevendorlist, image } from "../../constant";
 
 const Fade = React.forwardRef(function Fade(props, ref) {
   const { in: open, children, onEnter, onExited, ...other } = props;
@@ -104,18 +104,13 @@ BootstrapDialogTitle.propTypes = {
 function Vendordetails(props) {
 
   const [vendorObject, setVendorObject] = React.useState({
-    email: "",
-    password: "",
     image: "",
-    create_by: "1",
     state: "",
     phone: "",
     name: "",
     city: "",
     address: "",
     pincode: "",
-    latitude: "",
-    longitude: "",
   });
   const [backdropOpen, setBackdropOpen] = React.useState(false);
   const [alert, setAlert] = React.useState(false);
@@ -149,13 +144,14 @@ function Vendordetails(props) {
 
   const handleSave = async () => {
     setBackdropOpen(true);
-    console.log("VendorObject._id", vendorObject._id)
     if (vendorObject._id) {
       try {
         const headers = {
           "Content-Type": "application/json",
-          token: Login.data.token,
+          token: Login.data.response.token,
+
         };
+        console.log("Vendorid", vendorObject._id)
         const dataObject = {
           email: vendorObject.email,
           pincode: vendorObject.pincode,
@@ -164,23 +160,31 @@ function Vendordetails(props) {
           state: vendorObject.state,
           city: vendorObject.city,
           address: vendorObject.address,
-          latitude: vendorObject.latitude,
-          longitude: vendorObject.longitude,
+          id:vendorObject._id,
         };
+
         const editVendor = await axios({
           method: "put",
           url: updatevendorlist,
           data: dataObject,
           headers: headers,
+
         });
         if (editVendor.data.status === 200) {
-          getVendor({ token: Login.data.token });
+          getVendor({ token: Login.data.response.token });
           setBackdropOpen(false);
           handleClose();
           setErrorType("success");
           setMessage(editVendor.data.message);
           setAlert(true);
         } else if (editVendor.data.status === 401) {
+          setBackdropOpen(false);
+          handleClose();
+          setErrorType("error");
+          setMessage(editVendor.data.message);
+          setAlert(true);
+        }
+        else if (editVendor.data.status === 201) {
           setBackdropOpen(false);
           handleClose();
           setErrorType("error");
@@ -213,9 +217,7 @@ function Vendordetails(props) {
           state: vendorObject.state,
           city: vendorObject.city,
           address: vendorObject.address,
-          image: vendorObject.image,
-          latitude: vendorObject.latitude,
-          longitude: vendorObject.longitude,
+          image: vendorObject.patient_image,
         };
         const addvendor = await axios({
           method: "post",
@@ -225,7 +227,7 @@ function Vendordetails(props) {
         });
 
         if (addvendor.data.status === 201) {
-          getVendor({ token: Login.data.token });
+          getVendor({ token: Login.data.response.token });
           setBackdropOpen(false);
           handleClose();
           setErrorType("success");
@@ -251,6 +253,42 @@ function Vendordetails(props) {
       }
     }
   };
+  const onImageUpload = async (event) => {
+    setBackdropOpen(true);
+    let files = Object.values(event.target.files);
+    if (files[0] && files[0].size > 1000000) {
+      setErrorType("error");
+      setMessage("This image size is more than 1mb.");
+      setAlert(true);
+      setBackdropOpen(false);
+    } else {
+      let bodyFormData = new FormData();
+      bodyFormData.append("multiple_images", files[0]);
+      // bodyFormData.getAll("multiple_images")
+      try {
+        let imageUpload = await axios({
+          method: "post",
+          url: image, //"http://107.180.105.183:8445/uploadimage",
+          data: bodyFormData,
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        if (!imageUpload)
+          throw "Unable to Lists from database. API error, try again";
+        if (200 === imageUpload.status) {
+          console.log(imageUpload);
+          let splitArray = imageUpload.data.split(",");
+          let url = splitArray[0];
+          console.log(url);
+          setVendorObject({ ...vendorObject, patient_image: url });
+          setBackdropOpen(false);
+        }
+        if (502 === imageUpload.status)
+          throw "Server Error. Please reload and try again!!";
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  };
   const handleClose = () => {
     handleModelClose(false);
     setVendorObject({
@@ -263,8 +301,6 @@ function Vendordetails(props) {
       city: "",
       address: "",
       pincode: "",
-      latitude: "",
-      longitude: "",
     });
   };
 
@@ -302,7 +338,6 @@ function Vendordetails(props) {
             <Box style={{ margin: 10 }}>
               <Grid container spacing={2}>
                 <Grid item xs={6} md={6}>
-                  {/* city: "", : "", address: "", */}
                   <TextField
                     id="outlined-textarea"
                     label="Name"
@@ -315,26 +350,6 @@ function Vendordetails(props) {
                   />
                   <TextField
                     id="outlined-textarea"
-                    label="Email"
-                    placeholder="Enter Email Address"
-                    multiline
-                    fullWidth
-                    value={vendorObject.email}
-                    onChange={(e) => handleChange("email", e)}
-                    style={{ margin: 10 }}
-                  />
-                  <TextField
-                    id="outlined-textarea"
-                    label="State"
-                    placeholder="Enter state"
-                    multiline
-                    fullWidth
-                    value={vendorObject.state}
-                    onChange={(e) => handleChange("state", e)}
-                    style={{ margin: 10 }}
-                  />
-                  <TextField
-                    id="outlined-textarea"
                     label="Address"
                     placeholder="Enter Address"
                     multiline
@@ -343,6 +358,24 @@ function Vendordetails(props) {
                     value={vendorObject.address}
                     onChange={(e) => handleChange("address", e)}
                     style={{ margin: 10 }}
+                  />
+                  <TextField
+                    id="outlined-textarea"
+                    label="Pincode"
+                    placeholder="Enter Pincode"
+                    fullWidth
+                    value={vendorObject.pincode}
+                    onChange={(e) => handleChange("pincode", e)}
+                    style={{ margin: 10 }}
+                  />
+                  <input
+                    style={{
+                      marginTop: 15,
+                      marginLeft: 10,
+                    }}
+                    type="file"
+                    accept="image/*"
+                    onChange={(evt) => onImageUpload(evt)}
                   />
                 </Grid>
                 <Grid item xs={6} md={6}>
@@ -358,12 +391,12 @@ function Vendordetails(props) {
                   />
                   <TextField
                     id="outlined-textarea"
-                    label="Password"
-                    placeholder="Enter Password"
+                    label="State"
+                    placeholder="Enter state"
                     multiline
                     fullWidth
-                    value={vendorObject.password}
-                    onChange={(e) => handleChange("password", e)}
+                    value={vendorObject.state}
+                    onChange={(e) => handleChange("state", e)}
                     style={{ margin: 10 }}
                   />
                   <TextField
@@ -376,26 +409,6 @@ function Vendordetails(props) {
                     onChange={(e) => handleChange("city", e)}
                     style={{ margin: 10 }}
                   />
-                  <TextField
-                    id="outlined-textarea"
-                    label="Pincode"
-                    placeholder="Enter Pincode"
-                    fullWidth
-                    value={vendorObject.pincode}
-                    onChange={(e) => handleChange("pincode", e)}
-                    style={{ margin: 10 }}
-                  />
-
-                  {/* <TextField
-                    id="outlined-textarea"
-                    label="servic_types_ids"
-                    placeholder="Enter servic_types_ids"
-                    multiline
-                    fullWidth
-                    value={vendorObject.servic_types_ids}
-                    onChange={(e) => handleChange("servic_types_ids", e)}
-                    style={{ margin: 10 }}
-                  /> */}
                 </Grid>
               </Grid>
             </Box>

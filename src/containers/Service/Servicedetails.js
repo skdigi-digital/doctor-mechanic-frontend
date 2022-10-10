@@ -182,7 +182,7 @@ function Servicedetails(props) {
           data: dataObject,
           headers: headers,
         });
-        
+        console.log("Venderid", )
         if (updateservices.data.status === 200) {
           getService({ token: Login.data.response.token });
           setBackdropOpen(false);

@@ -63,7 +63,6 @@ export class LoginUsers extends Component {
   }
 
   ordersClick = (value, selected, name) => {
-
     this.setState({ [value]: true }, () => {
       if (value === "add") {
         this.setState({ open: true });

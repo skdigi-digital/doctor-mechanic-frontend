@@ -6,6 +6,7 @@ import { fetchEmployees } from "../api";
 
 export function* handleEmployeesLoad(action) {
   try {
+    console.log("Im the sagaaaaaaaaaa",action.employees)
     const employees = yield call(fetchEmployees, action.employees);
     if (employees && employees.error) throw employees.error;
     yield put(setEmployees(employees));

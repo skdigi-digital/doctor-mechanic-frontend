@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import PropTypes from "prop-types";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
@@ -8,8 +8,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import { loadUsers } from "../../store/actions/users";
+// import { loadExams } from "../../store/actions/exam";
 import DialogActions from "@mui/material/DialogActions";
+import { FormControl, InputLabel,InputAdornment } from "@mui/material";
 import {
   styled,
   useTheme,
@@ -21,15 +27,14 @@ import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 import { connect } from "react-redux";
-import { loadCourse } from "../../store/actions/course";
+
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import Grid from "@mui/material/Grid";
 // web.cjs is required for IE11 support
 import { useSpring, animated } from "react-spring";
-import { adduserApi } from "../../constant";
-import { loadUsers } from "../../store/actions/users";
-import { loadEmployees } from "../../store/actions/employees";
+
+import { createUser, updateUser } from "../../constant";
 
 const Fade = React.forwardRef(function Fade(props, ref) {
   const { in: open, children, onEnter, onExited, ...other } = props;
@@ -100,100 +105,157 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-function Employeedetails(props) {
+function Admindetails(props) {
   const [adminObject, setAdminObject] = React.useState({
-    Email_ID: "",
-    Password: "",
-    Phone_Number: "",
-    First_Name: "",
-    Last_Name: "",
-    City: "",
-    Location: "",
-    Address: "",
+    email: "",
+    password: "",
+    phone: "",
+    first_name: "",
+    last_name: "",
+    showPassword: false,
   });
+
   const [backdropOpen, setBackdropOpen] = React.useState(false);
   const [alert, setAlert] = React.useState(false);
   const [errorType, setErrorType] = React.useState("");
   const [message, setMessage] = React.useState("");
-
-  const { openModel, handleModelClose, getEmployees, Login } = props;
+  const {
+    openModel,
+    handleModelClose,
+    getUsersList,
+    selected,
+    Users,
+    token,
+  } = props;
   const vertical = "bottom";
   const horizontal = "center";
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
+  useEffect(() => {
+    Users.data.map((it) => {
+      if (it._id === selected[0]) {
+        setAdminObject(it);
+      }
+    });
+  }, [Users, selected]);  
+
+  const handleSave = async () => {
+    setBackdropOpen(true);
+    const user_type ="3"
+    if (adminObject._id) {
+
+      const dataObject = {
+        email: adminObject.email,
+        password: adminObject.password,
+        phone: adminObject.phone,
+        first_name: adminObject.first_name,
+        last_name: adminObject.last_name,
+        addresses: adminObject.addresses,
+        _id:user_type,
+      };
+      const headers = {
+        "Content-Type": "application/json",
+        token: token,
+      };
+      try {
+        const edituser = await axios({
+          method: "put",
+          url: updateUser + "/" + adminObject._id,
+          data: dataObject,
+          headers: headers,
+        });
+        
+        if (edituser.data.status === 200) {
+          getUsersList({ token:token });
+          setBackdropOpen(false);
+          handleClose();
+          setErrorType("success");
+          setMessage(edituser.data.message);
+          setAlert(true);
+        } else if (edituser.data.status === 401) {
+          setBackdropOpen(false);
+          handleClose();
+          setErrorType("error");
+          setMessage(edituser.data.message);
+          setAlert(true);
+        } else {
+          setBackdropOpen(false);
+          setErrorType("error");
+          setMessage("Error!, Please contact your Administrator!!");
+          setAlert(true);
+        }
+      } catch (error) {
+        setBackdropOpen(false);
+        setErrorType("error");
+        //setMessage(error.response.data.message);
+        setAlert(true);
+      }
+    } else {
+      try {
+        const dataObject = {
+          email: adminObject.email,
+          password: adminObject.password,
+          phone: adminObject.phone,
+          first_name: adminObject.first_name,
+          last_name: adminObject.last_name,
+          addresses: adminObject.addresses,
+        };
+
+        const headers = {
+          "Content-Type": "application/json",
+        };
+
+        const adduser = await axios({
+          method: "post",
+          url: createUser,
+          data: dataObject,
+          headers: headers,
+        });
+        if (adduser.data.status === 200) {
+          getUsersList({ token: token });
+          setBackdropOpen(false);
+          handleClose();
+          setErrorType("success");
+          setMessage(adduser.data.message);
+          setAlert(true);
+        } else if (adduser.data.status === 401) {
+          setBackdropOpen(false);
+          handleClose();
+          setErrorType("error");
+          setMessage(adduser.data.message);
+          setAlert(true);
+        } else {
+          setBackdropOpen(false);
+          setErrorType("error");
+          setMessage("Error!, Please contact your Administrator!!");
+          setAlert(true);
+        }
+      } catch (error) {
+        setBackdropOpen(false);
+        setErrorType("error");
+        setMessage(error.response.data.message);
+        setAlert(true);
+      }
+    }
+  };
+
   const handleChange = (name, event) => {
     setAdminObject({ ...adminObject, [name]: event.target.value });
   };
 
-  const handleSave = async () => {
-    setBackdropOpen(true);
-    const headers = {
-      "Content-Type": "application/json",
-      token: Login.data.token,
-    };
-    const dataObject = {
-      firstName: adminObject.firstName,
-      lastName: adminObject.lastName,
-      userType: adminObject.userType,
-      roles: adminObject.roles,
-      phoneNumber: adminObject.phoneNumber,
-      email: adminObject.email,
-      password: adminObject.password,
-    };
-    // console.log(adminObject);
-
-    try {
-      const addEmployee = await axios({
-        method: "post",
-        url: adduserApi,
-        data: dataObject,
-        headers: headers,
-      });
-
-      if (addEmployee.data.status === 200) {
-        getEmployees({ token: Login.data.token });
-        setBackdropOpen(false);
-        handleClose();
-        setErrorType("success");
-        setMessage(addEmployee.data.message);
-        setAlert(true);
-      } else if (addEmployee.data.status === 401) {
-        setBackdropOpen(false);
-        handleClose();
-        setErrorType("error");
-        setMessage(addEmployee.data.message);
-        setAlert(true);
-      } else {
-        setBackdropOpen(false);
-        setErrorType("error");
-        setMessage("Error!, Please contact your Administrator!!");
-        setAlert(true);
-      }
-    } catch (error) {
-      setBackdropOpen(false);
-      setErrorType("error");
-      setMessage(error.response.data.message);
-      setAlert(true);
-    }
-  };
-
-  // console.log(adminObject);
-
   const handleClose = () => {
     handleModelClose(false);
     setAdminObject({
-      Email_ID: "",
-      Password: "",
-      Phone_Number: "",
-      First_Name: "",
-      Last_Name: "",
-      City: "",
-      Location: "",
-      Address: "",
+      email: "",
+      password: "",
+      phone: "",
+      first_name: "",
+      last_name: "",
+      addresses: "",
     });
-  };
 
+  };
   const themeColor = createTheme({
     palette: {
       neutral: {
@@ -201,7 +263,7 @@ function Employeedetails(props) {
         contrastText: "#fff",
       },
     },
-  });
+  }); 
 
   return (
     <div>
@@ -221,21 +283,20 @@ function Employeedetails(props) {
       >
         <Fade in={openModel}>
           <BootstrapDialogTitle onClose={handleClose}>
-            Admin Details
+            Users Details
           </BootstrapDialogTitle>
           <DialogContent>
             <Box style={{ margin: 10 }}>
               <Grid container spacing={2}>
                 <Grid item xs={6} md={6}>
-                  {/* City: "", : "", Address: "", */}
                   <TextField
                     id="outlined-textarea"
                     label="First Name"
                     placeholder="Enter First Name"
                     multiline
                     fullWidth
-                    value={setAdminObject.First_Name}
-                    onChange={(e) => handleChange("First_Name", e)}
+                    value={adminObject.first_name}
+                    onChange={(e) => handleChange("first_name", e)}
                     style={{ margin: 10 }}
                   />
                   <TextField
@@ -244,30 +305,36 @@ function Employeedetails(props) {
                     placeholder="Enter Email"
                     multiline
                     fullWidth
-                    value={setAdminObject.Email_ID}
-                    onChange={(e) => handleChange("Email_ID", e)}
+                    value={adminObject.email}
+                    onChange={(e) => handleChange("email", e)}
                     style={{ margin: 10 }}
                   />
-                  <TextField
-                    id="outlined-textarea"
-                    label="Phone Number"
-                    placeholder="Enter Phone Number"
-                    multiline
-                    fullWidth
-                    value={setAdminObject.Phone_Number}
-                    onChange={(e) => handleChange("Phone_Number", e)}
-                    style={{ margin: 10 }}
-                  />
-                  <TextField
+
+                  {/* <TextField
                     id="outlined-textarea"
                     label="Address"
                     placeholder="Enter Address"
                     multiline
                     fullWidth
                     rows={4.4}
-                    value={setAdminObject.Address}
-                    onChange={(e) => handleChange("Address", e)}
+                    value={setAdminObject.addresses}
+                    onChange={(e) => handleChange("addresses", e)}
                     style={{ margin: 10 }}
+                  /> */}
+                  <TextField
+                    id="outlined-textarea"
+                    label="Password"
+                    placeholder="Enter password"
+                    type={adminObject.showPassword ? "text" : "password"}
+                    fullWidth
+                    value={adminObject.password}
+                    onChange={(e) => handleChange("password", e)}
+                    style={{ margin: 10 }}
+                    endadornment={
+                      <InputAdornment position="end">
+                        {adminObject.showPassword ? <VisibilityOff /> : <Visibility />}
+                      </InputAdornment>
+                    }
                   />
                 </Grid>
                 <Grid item xs={6} md={6}>
@@ -277,45 +344,24 @@ function Employeedetails(props) {
                     placeholder="Enter Last Name"
                     multiline
                     fullWidth
-                    value={setAdminObject.Last_Name}
-                    onChange={(e) => handleChange("Last_Name", e)}
+                    value={adminObject.last_name}
+                    onChange={(e) => handleChange("last_name", e)}
                     style={{ margin: 10 }}
                   />
                   <TextField
                     id="outlined-textarea"
-                    label="Password"
-                    placeholder="Enter Password"
+                    label="Phone Number"
+                    placeholder="Enter Phone Number"
                     multiline
                     fullWidth
-                    value={setAdminObject.Password}
-                    onChange={(e) => handleChange("Password", e)}
-                    style={{ margin: 10 }}
-                  />
-                  <TextField
-                    id="outlined-textarea"
-                    label="City"
-                    placeholder="Enter City"
-                    multiline
-                    fullWidth
-                    value={setAdminObject.City}
-                    onChange={(e) => handleChange("City", e)}
-                    style={{ margin: 10 }}
-                  />
-                  <TextField
-                    id="outlined-textarea"
-                    label="Location"
-                    placeholder="Enter Location"
-                    multiline
-                    fullWidth
-                    value={setAdminObject.Location}
-                    onChange={(e) => handleChange("Location", e)}
+                    value={adminObject.phone}
+                    onChange={(e) => handleChange("phone", e)}
                     style={{ margin: 10 }}
                   />
                 </Grid>
               </Grid>
             </Box>
           </DialogContent>
-
           <DialogActions>
             <ThemeProvider theme={themeColor}>
               <Button onClick={handleClose} variant="contained" color="neutral">
@@ -355,10 +401,13 @@ function Employeedetails(props) {
   );
 }
 
-const mapStateToProps = ({ Login, Course }) => ({ Login, Course });
-
-const mapDispatchToProps = (dispatch) => ({
-  getEmployees: (object) => dispatch(loadEmployees(object)),
+const mapStateToProps = ({ Users, Vendorlogin }) => ({
+  Users,
+  Vendorlogin,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Employeedetails);
+const mapDispatchToProps = (dispatch) => ({
+  getUsersList: (object) => dispatch(loadUsers(object)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Admindetails);

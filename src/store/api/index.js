@@ -84,8 +84,8 @@ const fetchStudents = async (token) => {
 
 const fetchEmployees = async (token) => {
   const headers = {
-    "Content-Type": "application/json",
-    authorization: "Bearer " + token.token,
+      "Content-Type": "application/json",
+      token:  token.token,
   };
   try {
     const employeesApi = await axios.get(employeesListApi, {
@@ -157,17 +157,19 @@ const fetchExam = async (token) => {
     return data;
   }
 };
-const     fetchUsers = async (token) => {
+const fetchUsers = async (token) => {
   console.log("token",token.token)
+  // const params = new ([["user_type",3]]);
   const headers = {
     "Content-Type": "application/json",
     token:  token.token,
-    
    };
-   //console.log( headers.token,"############################..............");
   try {
     const usersApi = await axios.get(usersListApi, {
       headers: headers,
+      params:{
+        user_type:"2"
+      }
     });
    
     usersApi.data.data.map((it) => {
