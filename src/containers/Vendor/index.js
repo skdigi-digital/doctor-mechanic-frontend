@@ -8,22 +8,22 @@ import { loadVendors } from "../../store/actions/vendorlist";
 // import { deleteNotificationApi } from "../../constant";
 const headers = [
   {
-    id: "title",
+    id: "name",
     numeric: false,
     disablePadding: true,
-    label: "Title",
+    label: "First_Name",
+  },
+  {
+    id: "phone",
+    numeric: false,
+    disablePadding: true,
+    label: "Phone",
   },
   {
     id: "email",
     numeric: false,
     disablePadding: true,
-    label: "Email",
-  },
-  {
-    id: "servic_types",
-    numeric: false,
-    disablePadding: true,
-    label: "Service Types",
+    label: " Email",
   },
 ];
 const display = "visible";
@@ -49,9 +49,10 @@ export class Vendors extends Component {
 
   componentDidMount() {
     const { getVendorlist, Login } = this.props;
-
-    if (Login.data.status === 200) {
-      getVendorlist({ token: Login.data.token });
+    
+    if (Login.data.response.status === 200) {
+      console.log("Vendorlist",Login.data.status)
+      getVendorlist({ token: Login.data.response.token });
     }
   }
 
@@ -206,7 +207,7 @@ const mapStateToProps = ({ Vendorlist, Login }) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getVendorlist: (object) => dispatch(loadVendors(object)),
-  //getNotificationsList: (object) => dispatch(loadNotifications(object)),
+  
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Vendors);

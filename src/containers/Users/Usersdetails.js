@@ -105,7 +105,7 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-function Examdetails(props) {
+function Userdetails(props) {
   const [usersObject, setUsersObject] = React.useState({
     email: "",
     password: "",
@@ -123,15 +123,10 @@ function Examdetails(props) {
     openModel,
     handleModelClose,
     getUsersList,
-    Vendorlogin,
     selected,
     Users,
     token,
-
   } = props;
-  console.log("Im inside the delete button",props)
-
-
   const vertical = "bottom";
   const horizontal = "center";
   const theme = useTheme();
@@ -143,7 +138,7 @@ function Examdetails(props) {
         setUsersObject(it);
       }
     });
-  }, [Users, selected]);
+  }, [Users, selected]);  
 
   const handleSave = async () => {
     setBackdropOpen(true);
@@ -157,14 +152,10 @@ function Examdetails(props) {
         first_name: usersObject.first_name,
         last_name: usersObject.last_name,
         addresses: usersObject.addresses,
-
       };
-
       const headers = {
         "Content-Type": "application/json",
         token: token,
-
-
       };
       try {
         const edituser = await axios({
@@ -173,19 +164,14 @@ function Examdetails(props) {
           data: dataObject,
           headers: headers,
         });
-        console.log(headers, "head");
-        console.log(edituser.data, "eded");
-        //console.log("logrok",Login.data.response.token );
+        
         if (edituser.data.status === 200) {
-          //getUsersList({ token: Login.data.response.token });
-          //   Vendorlogin.data.token 
-
+          getUsersList({ token:token });
           setBackdropOpen(false);
           handleClose();
           setErrorType("success");
           setMessage(edituser.data.message);
           setAlert(true);
-          console.log(getUsersList, "getuser");
         } else if (edituser.data.status === 401) {
           setBackdropOpen(false);
           handleClose();
@@ -225,9 +211,8 @@ function Examdetails(props) {
           data: dataObject,
           headers: headers,
         });
-        console.log(adduser.data, "adduser");
         if (adduser.data.status === 200) {
-          //getUsersList({ token: Vendorlogin.data.token });
+          getUsersList({ token: token });
           setBackdropOpen(false);
           handleClose();
           setErrorType("success");
@@ -270,7 +255,6 @@ function Examdetails(props) {
     });
 
   };
-  console.log(usersObject);
   const themeColor = createTheme({
     palette: {
       neutral: {
@@ -278,7 +262,7 @@ function Examdetails(props) {
         contrastText: "#fff",
       },
     },
-  });
+  }); 
 
   return (
     <div>
@@ -345,7 +329,7 @@ function Examdetails(props) {
                     value={usersObject.password}
                     onChange={(e) => handleChange("password", e)}
                     style={{ margin: 10 }}
-                    endAdornment={
+                    endadornment={
                       <InputAdornment position="end">
                         {usersObject.showPassword ? <VisibilityOff /> : <Visibility />}
                       </InputAdornment>
@@ -425,4 +409,4 @@ const mapDispatchToProps = (dispatch) => ({
   getUsersList: (object) => dispatch(loadUsers(object)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Examdetails);
+export default connect(mapStateToProps, mapDispatchToProps)(Userdetails);

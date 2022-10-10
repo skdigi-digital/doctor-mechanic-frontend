@@ -155,7 +155,6 @@ const EnhancedTableToolbar = (props) => {
     selectedName,
     displayaddbutton,
   } = props;
-  console.log("Im the Props of EnhancedTableTooar",props)
   const addButton = () => {
     handleButtonClick("add");
   };
@@ -257,6 +256,7 @@ export default function Datatable(props) {
     handleSelectEmpty,
     displayaddbutton,
   } = props;
+  console.log("Im the propsssssssssssssssss",props)
   React.useEffect(() => {
     if (selectEmpty === false) {
       setSelected([]);
@@ -333,6 +333,7 @@ export default function Datatable(props) {
             aria-labelledby="tableTitle"
             size="medium"
           >
+            {console.log("TotalLength lenght",data)}
             <EnhancedTableHead 
               header={props.headCell}
               numSelected={selected.length}
@@ -352,7 +353,6 @@ export default function Datatable(props) {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   const callback = (event) => {
                     handleClick(event, row._id, row[headCell[0].id]);
-                    console.log("hello buddy math");
                   };
 
                   return (

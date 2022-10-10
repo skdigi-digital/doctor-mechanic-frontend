@@ -38,7 +38,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
-import { updateservice, addservice, image } from "../../constant";
+import { updateservice, addservice, image, servicelist } from "../../constant";
 import { ContactsOutlined } from "@mui/icons-material";
 
 const Fade = React.forwardRef(function Fade(props, ref) {
@@ -117,9 +117,14 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-function Examdetails(props) {
+function Servicedetails(props) {
   const [serviceObject, setServiceObject] = React.useState({
-    category_type_id: 2,
+    name: "",
+    description: "",
+    estimated_cost: "",
+    tax: "",
+    additonal_options: "",
+    image: "",
   });
   const [backdropOpen, setBackdropOpen] = React.useState(false);
   const [alert, setAlert] = React.useState(false);
@@ -133,7 +138,9 @@ function Examdetails(props) {
     getService,
     Vendorlogin,
     selected,
+    Login,
     Servicelist,
+    token,
   } = props;
   const vertical = "bottom";
   const horizontal = "center";
@@ -147,6 +154,7 @@ function Examdetails(props) {
       }
     });
   }, [Servicelist, selected]);
+
   const handleSave = async () => {
     setBackdropOpen(true);
 
@@ -154,34 +162,39 @@ function Examdetails(props) {
     if (serviceObject._id) {
       const headers = {
         "Content-Type": "application/json",
-        token: Vendorlogin.data.token,
+        token: Login.data.response.token,
       };
       const dataObject = {
-        Category_type_id: serviceObject.Category_type_id,
-        text: serviceObject.text,
-        cities: serviceObject.cities,
-        is_super_service: serviceObject.is_super_service,
+        image: serviceObject.image,
+        name: serviceObject.name,
+        description: serviceObject.description,
+        estimated_cost: serviceObject.estimated_cost,
+        tax: serviceObject.tax,
+        additonal_options: serviceObject.additonal_options,
+        service_id:serviceObject._id,
       };
+      // console.log("error messagessssssssssss",data)
       try {
-        const editexam = await axios({
-          method: "post",
+        const updateservices = await axios({
+          
+          method: "put",
           url: updateservice,
           data: dataObject,
           headers: headers,
         });
-
-        if (editexam.data.status === 200) {
-          getService({ token: Vendorlogin.data.token });
+        
+        if (updateservices.data.status === 200) {
+          getService({ token: Login.data.response.token });
           setBackdropOpen(false);
           handleClose();
           setErrorType("success");
-          setMessage(editexam.data.message);
+          setMessage(updateservices.data.message);
           setAlert(true);
-        } else if (editexam.data.status === 401) {
+        } else if (updateservices.data.status === 401) {
           setBackdropOpen(false);
           handleClose();
           setErrorType("error");
-          setMessage(editexam.data.message);
+          setMessage(updateservices.data.message);
           setAlert(true);
         } else {
           setBackdropOpen(false);
@@ -190,23 +203,26 @@ function Examdetails(props) {
           setAlert(true);
         }
       } catch (error) {
+        console.log("Catch error messagessss",error)
         setBackdropOpen(false);
-        setErrorType("error");
-        setMessage(error.response.data.message);
+        setErrorType("Error!, Please contact your Samuel!",error);
+        //setMessage(error.response.data.message);
         setAlert(true);
       }
     } else {
+      try {
       const headers = {
         "Content-Type": "application/json",
-        token: Vendorlogin.data.token,
+        token: Login.data.response.token,
       };
       const dataObject = {
-        Category_type_id: serviceObject.Category_type_id,
-        text: serviceObject.text,
-        cities: serviceObject.cities,
-        is_super_service: serviceObject.is_super_service,
+        image: serviceObject.patient_image,
+        name: serviceObject.name,
+        description: serviceObject.description,
+        estimated_cost: serviceObject.estimated_cost,
+        tax: serviceObject.tax,
+        additonal_options: serviceObject.additonal_options,
       };
-      try {
         const addservices = await axios({
           method: "post",
           url: addservice,
@@ -214,8 +230,8 @@ function Examdetails(props) {
           headers: headers,
         });
 
-        if (addservices.data.status === 201) {
-          //getService({ token: Vendorlogin.data.token });
+        if (addservices.data.status === 200) {
+          getService({ token: Login.data.response.token });
           setBackdropOpen(false);
           handleClose();
           setErrorType("success");
@@ -228,15 +244,16 @@ function Examdetails(props) {
           setMessage(addservices.data.message);
           setAlert(true);
         } else {
+          console.log("im the image content")
           setBackdropOpen(false);
           setErrorType("error");
-          setMessage("Error!, Please contact your Administrator!!");
+          setMessage("Error!, Please ");
           setAlert(true);
         }
       } catch (error) {
         setBackdropOpen(false);
         setErrorType("error");
-        setMessage(error.response.data.message);
+        setMessage("Error!, Please contact your Administrator!!",error);
         setAlert(true);
       }
     }
@@ -244,7 +261,6 @@ function Examdetails(props) {
   const onImageUpload = async (event) => {
     setBackdropOpen(true);
     let files = Object.values(event.target.files);
-
     if (files[0] && files[0].size > 1000000) {
       setErrorType("error");
       setMessage("This image size is more than 1mb.");
@@ -281,59 +297,16 @@ function Examdetails(props) {
   const handleChange = (name, event) => {
     setServiceObject({ ...serviceObject, [name]: event.target.value });
   };
-  const handleChangecheckbox = (name, event) => {
-    setServiceObject({ ...serviceObject, [name]: event.target.checked });
-  };
-
-  const handleDelete = (item, i) => {
-    let updatedList = serviceObject.questions.map((item, index) => {
-      if (index === i) {
-        const temp = [...item.choices];
-        temp.splice(i, 1);
-        return { ...item, choices: temp }; //gets everything that was already in item, and updates “done”
-      }
-      return item; // else return unmodified item
-    });
-    setServiceObject({ ...serviceObject, questions: updatedList });
-  };
-
-  const handleKeyDown = (evt) => {
-    if (["Enter", ","].includes(evt.key)) {
-      evt.preventDefault();
-
-      let value = options.trim();
-      setStack(stack.push(value));
-    }
-  };
-
-
-
-  const isValid = (tag, item) => {
-    let error = null;
-    if (isInList(tag, item)) {
-      error = `${tag} has already been added.`;
-    }
-    if (error) {
-      setErrorType("error");
-      setMessage(error);
-      setAlert(true);
-      return false;
-    }
-    return true;
-  };
-  const isInList = (tag, item) => {
-    return item.cities.includes(tag);
-  };
 
   const handleClose = () => {
     handleModelClose(false);
     setServiceObject({
-      Category_type_id: 1,
-      text: "",
-      cities: [],
-      is_super_service: false,
-      super_sub_service_ids: [],
-      sub_types: {},
+      name: "",
+      description: "",
+      estimated_cost: "",
+      tax: "",
+      additonal_options: "",
+      image: "",
     });
   };
   console.log(serviceObject);
@@ -374,31 +347,34 @@ function Examdetails(props) {
                 <Grid item xs={6} md={6}>
                   <TextField
                     id="outlined-textarea"
-                    label="text"
-                    placeholder="Enter Text"
+                    label="Name"
+                    placeholder="Enter Name"
                     multiline
                     fullWidth
-                    value={serviceObject.text}
-                    onChange={(e) => handleChange("text", e)}
+                    value={serviceObject.name}
+                    onChange={(e) => handleChange("name", e)}
                     style={{ margin: 10 }}
                   />
-                  <>
-                    <TextField
-                      id="outlined-textarea"
-                      label="Cities"
-                      placeholder="Enter cities"
-                      multiline
-                      fullWidth
-                      value={options}
-                      onKeyDown={(e) => handleKeyDown(e)}
-                      onChange={(e) => setOptions(e.target.value)}
-                      style={{ margin: 10 }}
-                    />
-
-                    <Stack direction="row" spacing={1} style={{ margin: 10 }}>
-                      <Chip label="hello"></Chip>
-                    </Stack>
-                  </>
+                  <TextField
+                    id="outlined-textarea"
+                    label="Description"
+                    placeholder="Enter Description"
+                    multiline
+                    fullWidth
+                    value={serviceObject.description}
+                    onChange={(e) => handleChange("description", e)}
+                    style={{ margin: 10 }}
+                  />
+                  <TextField
+                    id="outlined-textarea"
+                    label="Estimated Cost"
+                    placeholder="Estimation"
+                    multiline
+                    fullWidth
+                    value={serviceObject.estimated_cost}
+                    onChange={(e) => handleChange("estimated_cost", e)}
+                    style={{ margin: 10 }}
+                  />
                   <input
                     style={{
                       marginTop: 15,
@@ -410,45 +386,26 @@ function Examdetails(props) {
                   />
                 </Grid>
                 <Grid item xs={6} md={6}>
-                  <FormControl
+                  <TextField
+                    id="outlined-textarea"
+                    label="Additional Option"
+                    placeholder="Enter Optional"
+                    multiline
                     fullWidth
-                    style={{
-                      margin: 10,
-                    }}
-                  >
-                    <InputLabel id="demo-simple-select-label">
-                      Service Type
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={serviceObject.Category_type_id}
-                      label="Course"
-                      onChange={(e) => handleChange("Category_type_id", e)}
-                    >
-                      <MenuItem value={1}>Personal Service</MenuItem>
-                      <MenuItem value={2}>Home Service</MenuItem>
-                      <MenuItem value={3}>Products</MenuItem>
-                    </Select>
-                  </FormControl>
-
-                  <FormControl
-                    style={{
-                      margin: 12,
-                      display: "flex",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Checkbox
-                      checked={serviceObject.is_super_service}
-                      onChange={(e) =>
-                        handleChangecheckbox("is_super_service", e)
-                      }
-                    ></Checkbox>
-                    <label style={{ marginTop: 10, marginLeft: 10 }}>
-                      Super Service
-                    </label>
-                  </FormControl>
+                    value={serviceObject.additonal_options}
+                    onChange={(e) => handleChange("additonal_options", e)}
+                    style={{ margin: 10 }}
+                  />
+                  <TextField
+                    id="outlined-textarea"
+                    label="Tax"
+                    placeholder="Enter Tax"
+                    multiline
+                    fullWidth
+                    value={serviceObject.tax}
+                    onChange={(e) => handleChange("tax", e)}
+                    style={{ margin: 10 }}
+                  />
 
                   {/* {serviceObject.questionType === 1 && (
                     <>
@@ -513,13 +470,14 @@ function Examdetails(props) {
   );
 }
 
-const mapStateToProps = ({ Vendorlogin, Servicelist }) => ({
+const mapStateToProps = ({ Vendorlogin, Login, Servicelist, }) => ({
   Vendorlogin,
   Servicelist,
+  Login,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   getService: (object) => dispatch(loadService(object)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Examdetails);
+export default connect(mapStateToProps, mapDispatchToProps)(Servicedetails);

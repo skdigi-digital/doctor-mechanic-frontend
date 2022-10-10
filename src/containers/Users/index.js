@@ -27,7 +27,6 @@ const headers = [
   },
 ];
 const display = "visible";
-
 export class LoginUsers extends Component {
   constructor(props) {
     super(props);
@@ -53,12 +52,21 @@ export class LoginUsers extends Component {
     getUser({ token: Login.data.response.token });
     this.setState({token:Login.data.response.token })
   }
+  componentDidUpdate()
+  {
+    const {errorType} = this.state;
+    const {getUser,Login} = this.props;
+    if(errorType != ""){
+    getUser({token: Login.data.response.token});
+    this.setState({errorType: ""})
+    }
+  }
 
   ordersClick = (value, selected, name) => {
+
     this.setState({ [value]: true }, () => {
       if (value === "add") {
         this.setState({ open: true });
-       
       } else if (value === "edit") {
         this.setState({ open: true, selected: selected });
       } else {
@@ -73,7 +81,7 @@ export class LoginUsers extends Component {
   deletenotification = async () => {
     this.setState({ deleteBackdrop: true });
     try {
-      const { Login, getNotificationsList } = this.props;
+      const { Login } = this.props;
       const headers = {
         "Content-Type": "application/x-www-form-urlencoded",
         token: Login.data.response.token,
@@ -91,8 +99,7 @@ export class LoginUsers extends Component {
         data: data,
         headers: headers,
       });
-      
-      
+
       if (notificationDelete.data.status === 200) {
         this.setState({
           deleteBackdrop: false,
@@ -100,7 +107,7 @@ export class LoginUsers extends Component {
           message: notificationDelete.data.message,
           alert: true,
         });
-        getNotificationsList({ token: Login.data.response.token });
+        //getNotificationsList({ token: Login.data.response.token });
         this.handleDeleteModal(false);
       } else if (
         notificationDelete.data.status === 201 ||
@@ -124,7 +131,7 @@ export class LoginUsers extends Component {
       this.setState({
         deleteBackdrop: false,
         errorType: "error",
-        message: "Error!, Please contact your Administrator!!",
+        message: "Error!, Please contact your Administrator!!" + error,
         alert: true,
       });
     }
@@ -166,6 +173,7 @@ export class LoginUsers extends Component {
       selectBol,
       token,
     } = this.state;
+    console.log("Vendorlist",this.props)
     return (
       <div style={{ marginTop: 30 }}>
         <Datatable

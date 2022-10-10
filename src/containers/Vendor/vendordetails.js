@@ -102,18 +102,20 @@ BootstrapDialogTitle.propTypes = {
 };
 
 function Vendordetails(props) {
+
   const [vendorObject, setVendorObject] = React.useState({
     email: "",
     password: "",
+    image: "",
+    create_by: "1",
+    state: "",
     phone: "",
-    first_name: "",
-    last_name: "",
-    title: "",
+    name: "",
     city: "",
-    locations: "",
     address: "",
-    servic_types: "",
-    servic_types_ids: "",
+    pincode: "",
+    latitude: "",
+    longitude: "",
   });
   const [backdropOpen, setBackdropOpen] = React.useState(false);
   const [alert, setAlert] = React.useState(false);
@@ -147,7 +149,7 @@ function Vendordetails(props) {
 
   const handleSave = async () => {
     setBackdropOpen(true);
-
+    console.log("VendorObject._id", vendorObject._id)
     if (vendorObject._id) {
       try {
         const headers = {
@@ -155,22 +157,18 @@ function Vendordetails(props) {
           token: Login.data.token,
         };
         const dataObject = {
-          title: vendorObject.title,
           email: vendorObject.email,
-          password: vendorObject.password,
+          pincode: vendorObject.pincode,
           phone: vendorObject.phone,
-          first_name: vendorObject.first_name,
-          last_name: vendorObject.last_name,
+          name: vendorObject.name,
+          state: vendorObject.state,
           city: vendorObject.city,
-          locations: vendorObject.locations,
           address: vendorObject.address,
-          servic_types: vendorObject.servic_types,
-          servic_types_ids: vendorObject.servic_types_ids,
-
-          id: vendorObject._id,
+          latitude: vendorObject.latitude,
+          longitude: vendorObject.longitude,
         };
         const editVendor = await axios({
-          method: "post",
+          method: "put",
           url: updatevendorlist,
           data: dataObject,
           headers: headers,
@@ -207,17 +205,17 @@ function Vendordetails(props) {
           token: Login.data.token,
         };
         const dataObject = {
-          title: vendorObject.title,
           email: vendorObject.email,
-          password: vendorObject.password,
+          pincode: vendorObject.pincode,
           phone: vendorObject.phone,
-          first_name: vendorObject.first_name,
-          last_name: vendorObject.last_name,
+          name: vendorObject.name,
+          password: vendorObject.password,
+          state: vendorObject.state,
           city: vendorObject.city,
-          locations: vendorObject.locations,
           address: vendorObject.address,
-          servic_types: vendorObject.servic_types,
-          servic_types_ids: vendorObject.servic_types_ids,
+          image: vendorObject.image,
+          latitude: vendorObject.latitude,
+          longitude: vendorObject.longitude,
         };
         const addvendor = await axios({
           method: "post",
@@ -253,23 +251,20 @@ function Vendordetails(props) {
       }
     }
   };
-
-  console.log(vendorObject);
-
   const handleClose = () => {
     handleModelClose(false);
     setVendorObject({
       email: "",
       password: "",
+      image: "",
+      state: "",
       phone: "",
-      first_name: "",
-      last_name: "",
+      name: "",
       city: "",
-      title: "",
-      locations: "",
       address: "",
-      servic_types: "",
-      servic_types_ids: "",
+      pincode: "",
+      latitude: "",
+      longitude: "",
     });
   };
 
@@ -310,18 +305,18 @@ function Vendordetails(props) {
                   {/* city: "", : "", address: "", */}
                   <TextField
                     id="outlined-textarea"
-                    label="First Name"
-                    placeholder="Enter First Name"
+                    label="Name"
+                    placeholder="Enter Name"
                     multiline
                     fullWidth
-                    value={vendorObject.first_name}
-                    onChange={(e) => handleChange("first_name", e)}
+                    value={vendorObject.name}
+                    onChange={(e) => handleChange("name", e)}
                     style={{ margin: 10 }}
                   />
                   <TextField
                     id="outlined-textarea"
                     label="Email"
-                    placeholder="Enter Email"
+                    placeholder="Enter Email Address"
                     multiline
                     fullWidth
                     value={vendorObject.email}
@@ -330,28 +325,18 @@ function Vendordetails(props) {
                   />
                   <TextField
                     id="outlined-textarea"
-                    label="Phone Number"
-                    placeholder="Enter Phone Number"
+                    label="State"
+                    placeholder="Enter state"
                     multiline
                     fullWidth
-                    value={vendorObject.phone}
-                    onChange={(e) => handleChange("phone", e)}
+                    value={vendorObject.state}
+                    onChange={(e) => handleChange("state", e)}
                     style={{ margin: 10 }}
                   />
                   <TextField
                     id="outlined-textarea"
-                    label="service types"
-                    placeholder="Enter service types"
-                    multiline
-                    fullWidth
-                    value={vendorObject.servic_types}
-                    onChange={(e) => handleChange("servic_types", e)}
-                    style={{ margin: 10 }}
-                  />
-                  <TextField
-                    id="outlined-textarea"
-                    label="address"
-                    placeholder="Enter address"
+                    label="Address"
+                    placeholder="Enter Address"
                     multiline
                     fullWidth
                     rows={4.4}
@@ -363,12 +348,12 @@ function Vendordetails(props) {
                 <Grid item xs={6} md={6}>
                   <TextField
                     id="outlined-textarea"
-                    label="Last Name"
-                    placeholder="Enter Last Name"
+                    label="Phone number"
+                    placeholder="Enter Phone number"
                     multiline
                     fullWidth
-                    value={vendorObject.last_name}
-                    onChange={(e) => handleChange("last_name", e)}
+                    value={vendorObject.phone}
+                    onChange={(e) => handleChange("phone", e)}
                     style={{ margin: 10 }}
                   />
                   <TextField
@@ -383,14 +368,24 @@ function Vendordetails(props) {
                   />
                   <TextField
                     id="outlined-textarea"
-                    label="Title"
-                    placeholder="Enter Title"
+                    label="city"
+                    placeholder="Enter city"
                     multiline
                     fullWidth
-                    value={vendorObject.title}
-                    onChange={(e) => handleChange("title", e)}
+                    value={vendorObject.city}
+                    onChange={(e) => handleChange("city", e)}
                     style={{ margin: 10 }}
                   />
+                  <TextField
+                    id="outlined-textarea"
+                    label="Pincode"
+                    placeholder="Enter Pincode"
+                    fullWidth
+                    value={vendorObject.pincode}
+                    onChange={(e) => handleChange("pincode", e)}
+                    style={{ margin: 10 }}
+                  />
+
                   {/* <TextField
                     id="outlined-textarea"
                     label="servic_types_ids"
@@ -401,27 +396,6 @@ function Vendordetails(props) {
                     onChange={(e) => handleChange("servic_types_ids", e)}
                     style={{ margin: 10 }}
                   /> */}
-                  <TextField
-                    id="outlined-textarea"
-                    label="city"
-                    placeholder="Enter city"
-                    multiline
-                    fullWidth
-                    value={vendorObject.city}
-                    onChange={(e) => handleChange("city", e)}
-                    style={{ margin: 10 }}
-                  />
-
-                  <TextField
-                    id="outlined-textarea"
-                    label="locations"
-                    placeholder="Enter locations"
-                    multiline
-                    fullWidth
-                    value={vendorObject.locations}
-                    onChange={(e) => handleChange("locations", e)}
-                    style={{ margin: 10 }}
-                  />
                 </Grid>
               </Grid>
             </Box>

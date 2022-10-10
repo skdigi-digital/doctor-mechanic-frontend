@@ -31,7 +31,7 @@ import { vendor, admin } from "../../restriction";
 import { connect } from "react-redux";
 import Users from "../Users";
 import Vendor from "../Vendor";
-import Service from "../Service";
+import Services from "../Service";
 import Admin from "../Admin";
 
 import Notification from "../notification";
@@ -241,7 +241,7 @@ function Sidebar(props) {
           <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/users" component={Users} />
           <Route exact path="/vendor" component={Vendor} />
-          <Route exact path="/service" component={Service} />
+          <Route exact path="/service" component={Services} />
           <Route exact path="/admin" component={Admin} />
           <Route exact path="/notification" component={Notification} />
           <Route exact path="/orders" component={Orderslist}/>
