@@ -6,6 +6,7 @@ import Employees from "./employees";
 import Students from "./students";
 import Users from "./users";
 import Vendorlogin from "./vendorlogin";
+import Dealer from "./dealer"
 import Vendors from "./vendorslist";
 import Service from "./service";
 import Notification from "./notification";
@@ -19,11 +20,12 @@ export default function* rootSaga() {
     Exam(),
     Students(),
     Users(),
+    Admin(),
     Vendorlogin(),
     Vendors(),
     Service(),
     Notification(),
     Orders(),
-    Admin(),
+    Dealer(),
   ]);
 }

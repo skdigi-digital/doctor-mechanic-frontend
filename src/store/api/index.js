@@ -12,6 +12,7 @@ import {
   servicelist,
   orderslist,
   adminListApi,
+  dealerListApi,
 } from "../../constant.js";
 import moment from "moment";
 import { Login } from "@mui/icons-material";
@@ -108,6 +109,30 @@ const fetchEmployees = async (token) => {
   }
 };
 
+const fetchDealer = async (token) => {
+  const headers = {
+      "Content-Type": "application/json",
+      token:  token.token,
+  };
+  try {
+    const dealerApi = await axios.get(dealerListApi, {
+      headers: headers,
+    });
+
+    dealerApi.data.data.map((it) => {
+      return (it.createddt = moment(it.createddt).format("DD MMM YYYY"));
+    });
+
+    let dealer = await dealerApi.data.data;
+    return dealer;
+  } catch (error) {
+    const data = {
+      error: "",
+    };
+    data.error = error.response.data;
+    return data;
+  }
+};
 const fetchAdmin = async (token) => {
   const headers = {
       "Content-Type": "application/json",
@@ -331,4 +356,5 @@ export {
   fetchNotification,
   fetchOrders,
   fetchAdmin,
+  fetchDealer,
 };

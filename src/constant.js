@@ -23,6 +23,12 @@ export const notificationLsitApi = baseUrl + "notification/getnotifications";
 
 export const adminListApi = baseUrl + "adminauth/suadminList";
 
+export const dealerListApi = baseUrl + "dealer/dealerList";
+export const adddealer = baseUrl + "dealer/addDealer";
+export const editdealer = baseUrl + "dealer/editDealer";
+export const deletedealer = baseUrl + "dealer/deleteDealer";
+
+
 export const employeesListApi = baseUrl + "employee/employeelist";
 export const addemployees = baseUrl + "employee/addemployee";
 

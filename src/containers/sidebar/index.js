@@ -36,6 +36,7 @@ import Admin from "../Admin";
 
 import Notification from "../notification";
 import Orderslist from "../orderslist";
+import Dealer from "../dealers";
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -245,6 +246,7 @@ function Sidebar(props) {
           <Route exact path="/admin" component={Admin} />
           <Route exact path="/notification" component={Notification} />
           <Route exact path="/orders" component={Orderslist}/>
+          <Route exact path="/dealer" component={Dealer}/>
         </Router>
       </Box>
     </Box>

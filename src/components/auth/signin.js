@@ -56,14 +56,14 @@ function Signin(props) {
     });
     return ref.current;
   };
-
   const prevLogin = usePrevious({ Login });
   const prevVendorLogin = usePrevious({ Vendorlogin });
 
   useEffect(() => {
-    
     if (prevLogin && prevLogin.Login.loading !== Login.loading) {
-      if (Login.data && Login.data.response.message === "Login Success") {
+      console.log("IM the sign in ",prevLogin);
+
+      if (Login.data && Login.data.response && Login.data.response.message=== "Login Success") {
         setBackdropOpen(false);
 
         window.location.pathname = "/dashboard";
@@ -76,7 +76,6 @@ function Signin(props) {
     }
   }, [prevLogin, Login]);
   useEffect(() => {
-
     if (
       prevVendorLogin &&
       prevVendorLogin.Vendorlogin.loading !== Vendorlogin.loading
@@ -122,12 +121,11 @@ function Signin(props) {
     });
     } else if (values.user_type === 2) {
       setBackdropOpen(true);
-      console.log("hello");
       const { setVendorLogin } = props;
       setVendorLogin({
         email: values.email,
         password: values.password,
-    user_type: values.user_type,
+        user_type: values.user_type,
       });
     } else {
       
