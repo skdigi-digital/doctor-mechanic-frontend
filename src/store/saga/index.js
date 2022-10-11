@@ -10,6 +10,7 @@ import Vendors from "./vendorslist";
 import Service from "./service";
 import Notification from "./notification";
 import Orders from "./orders";
+import Admin from "./admin";
 export default function* rootSaga() {
   yield all([
     Login(),
@@ -23,5 +24,6 @@ export default function* rootSaga() {
     Service(),
     Notification(),
     Orders(),
+    Admin(),
   ]);
 }

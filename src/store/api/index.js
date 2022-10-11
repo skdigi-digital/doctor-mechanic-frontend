@@ -11,6 +11,7 @@ import {
   notificationLsitApi,
   servicelist,
   orderslist,
+  adminListApi,
 } from "../../constant.js";
 import moment from "moment";
 import { Login } from "@mui/icons-material";
@@ -98,6 +99,32 @@ const fetchEmployees = async (token) => {
 
     let employees = await employeesApi.data.data;
     return employees;
+  } catch (error) {
+    const data = {
+      error: "",
+    };
+    data.error = error.response.data;
+    return data;
+  }
+};
+
+const fetchAdmin = async (token) => {
+  const headers = {
+      "Content-Type": "application/json",
+      token:  token.token,
+  };
+  try {
+    console.log("i am inside the admin service")
+    const adminApi = await axios.get(adminListApi, {
+      headers: headers,
+    });
+
+    adminApi.data.data.map((it) => {
+      return (it.createddt = moment(it.createddt).format("DD MMM YYYY"));
+    });
+
+    let admin = await adminApi.data.data;
+    return admin;
   } catch (error) {
     const data = {
       error: "",
@@ -303,4 +330,5 @@ export {
   fetchService,
   fetchNotification,
   fetchOrders,
+  fetchAdmin,
 };

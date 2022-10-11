@@ -21,6 +21,7 @@ export const usersListApi = baseUrl + "customers/customerlist";
 export const studentsListApi = baseUrl + "loginUsers";
 export const notificationLsitApi = baseUrl + "notification/getnotifications";
 
+export const adminListApi = baseUrl + "adminauth/suadminList";
 
 export const employeesListApi = baseUrl + "employee/employeelist";
 export const addemployees = baseUrl + "employee/addemployee";

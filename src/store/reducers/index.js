@@ -10,6 +10,7 @@ import VendorloginReducer from "./vendorlogin";
 import ServicelistReducer from "./service";
 import NotificationReducer from "./notification";
 import OrdersReducer from "./orders";
+import AdminReducer from "./admin";
 const rootReducer = combineReducers({
   Login: LoginReducer,
   Users: UsersReducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   Exam: ExamReducer,
   Students: StudentsReducer,
   Employees: EmployeeReducer,
+  Admin: AdminReducer,
   Vendorlogin: VendorloginReducer,
   Vendorlist: VendorlistReducer,
   Servicelist: ServicelistReducer,

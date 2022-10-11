@@ -2,31 +2,31 @@ import Admindetails from "./adminmodel";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Datatable from "../../components/datatable";
-import { loadUsers } from "../../store/actions/users";
-import DeleteModal from "../../components/deletemodal/deleteModal";
-import axios from "axios";
-import { deleteNotificationApi } from "../../constant";
+import { loadAdmin } from "../../store/actions/admin";
+// import DeleteModal from "../../components/deletemodal/deleteModal";
+// import axios from "axios";
+// import { deleteNotificationApi } from "../../constant";
 const headers = [
   {
-    id: "first_name",
+    id: "username",
     numeric: false,
     disablePadding: true,
-    label: "First_Name",
-  },
-  {
-    id: "phone",
-    numeric: false,
-    disablePadding: true,
-    label: "Phone",
+    label: "UserName",
   },
   {
     id: "email",
     numeric: false,
     disablePadding: true,
-    label: " Email",
+    label: "Email",
+  },
+  {
+    id: "createddt",
+    numeric: true,
+    disablePadding: false,
+    label: "Created On",
   },
 ];
-const display = "visible";
+
 export class Admin extends Component {
   constructor(props) {
     super(props);
@@ -43,23 +43,16 @@ export class Admin extends Component {
       selectedName: "",
       selected: [],
       selectBol: false,
-      token:"",
     };
   }
 
   componentDidMount() {
-    const { getUser, Login } = this.props;
-    getUser({ token: Login.data.response.token });
-    this.setState({token:Login.data.response.token })
-  }
-  componentDidUpdate()
-  {
-    const {errorType} = this.state;
-    const {getUser,Login} = this.props;
-    if(errorType != ""){
-    getUser({token: Login.data.response.token});
-    this.setState({errorType: ""})
-    }
+    const { getadmin, Login } = this.props;
+    console.log("propssssssssssssss",this.props); 
+    if (Login.data.response.status === 200) {
+      getadmin({ token: Login.data.response.token });
+    } 
+    
   }
 
   ordersClick = (value, selected, name) => {
@@ -77,64 +70,65 @@ export class Admin extends Component {
       }
     });
   };
-  deletenotification = async () => {
-    this.setState({ deleteBackdrop: true });
-    try {
-      const { Login } = this.props;
-      const headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-        token: Login.data.response.token,
-      };
-      const notification = {
-        customer_id: this.state.selected[0],
-      };
-      const data = Object.keys(notification)
-        .map((key) => `${key}=${encodeURIComponent(notification[key])}`)
-        .join("&");
+  // deletenotification = async () => {
+  //   this.setState({ deleteBackdrop: true });
+  //   try {
+  //     const { Login, getNotificationsList } = this.props;
+  //     const headers = {
+  //       "Content-Type": "application/x-www-form-urlencoded",
+  //       token: Login.data.token,
+  //     };
 
-      const notificationDelete = await axios({
-        method: "delete",
-        url: deleteNotificationApi,
-        data: data,
-        headers: headers,
-      });
+  //     const notification = {
+  //       notification_id: this.state.selected[0],
+  //     };
 
-      if (notificationDelete.data.status === 200) {
-        this.setState({
-          deleteBackdrop: false,
-          errorType: "success",
-          message: notificationDelete.data.message,
-          alert: true,
-        });
-        //getNotificationsList({ token: Login.data.response.token });
-        this.handleDeleteModal(false);
-      } else if (
-        notificationDelete.data.status === 201 ||
-        notificationDelete.data.status === 500
-      ) {
-        this.setState({
-          deleteBackdrop: false,
-          errorType: "error",
-          message: notificationDelete.data.message,
-          alert: true,
-        });
-      } else {
-        this.setState({
-          deleteBackdrop: false,
-          errorType: "error",
-          message: "Error!, Please contact your Administrator!!",
-          alert: true,
-        });
-      }
-    } catch (error) {
-      this.setState({
-        deleteBackdrop: false,
-        errorType: "error",
-        message: "Error!, Please contact your Administrator!!" + error,
-        alert: true,
-      });
-    }
-  };
+  //     const data = Object.keys(notification)
+  //       .map((key) => `${key}=${encodeURIComponent(notification[key])}`)
+  //       .join("&");
+
+  //     const notificationDelete = await axios({
+  //       method: "post",
+  //       url: deleteNotificationApi,
+  //       data: data,
+  //       headers: headers,
+  //     });
+  //     if (notificationDelete.data.status === 200) {
+  //       this.setState({
+  //         deleteBackdrop: false,
+  //         errorType: "success",
+  //         message: notificationDelete.data.message,
+  //         alert: true,
+  //       });
+  //       getNotificationsList({ token: Login.data.token });
+  //       this.handleDeleteModal(false);
+  //     } else if (
+  //       notificationDelete.data.status === 201 ||
+  //       notificationDelete.data.status === 500
+  //     ) {
+  //       this.setState({
+  //         deleteBackdrop: false,
+  //         errorType: "error",
+  //         message: notificationDelete.data.message,
+  //         alert: true,
+  //       });
+  //     } else {
+  //       this.setState({
+  //         deleteBackdrop: false,
+  //         errorType: "error",
+  //         message: "Error!, Please contact your Administrator!!",
+  //         alert: true,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     this.setState({
+  //       deleteBackdrop: false,
+  //       errorType: "error",
+  //       message: "Error!, Please contact your Administrator!!",
+  //       alert: true,
+  //     });
+  //   }
+  // };
   handleModal = (value) => {
     this.setState({ open: value }, () => {
       if (this.state.open === false) {
@@ -159,7 +153,8 @@ export class Admin extends Component {
   };
 
   render() {
-    const { Users } = this.props;
+    const { Admin } = this.props;
+    console.log("Im the admin",Admin)
     const {
       open,
       selected,
@@ -170,28 +165,25 @@ export class Admin extends Component {
       message,
       errorType,
       selectBol,
-      token,
     } = this.state;
-    console.log("Vendorlist",this.props)
     return (
       <div style={{ marginTop: 30 }}>
         <Datatable
           name="Admin"
           headCell={headers}
-          data={Users.data}
+          data={Admin.data}
           handleButtonClick={this.ordersClick}
           selectEmpty={selectBol}
           handleSelectEmpty={(value) => this.setState({ selectBol: value })}
-          displayaddbutton={display}
         />
+        {console.log("here we are")}
 
-         <Admindetails
+        <Admindetails
           openModel={open}
           handleModelClose={this.handleModal}
           selected={selected}
-          token={token}
-        />  
-        <DeleteModal
+        />
+        {/* <DeleteModal
           openModal={deleteModal}
           name={selectedName}
           backdropOpen={deleteBackdrop}
@@ -202,19 +194,19 @@ export class Admin extends Component {
           errorType={errorType}
           message={message}
           alert={alert}
-        />
+        /> */}
       </div>
     );
   }
 }
 
-const mapStateToProps = ({ Users, Login }) => ({
-  Users,
+const mapStateToProps = ({ Admin, Login }) => ({
+  Admin,
   Login,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getUser: (object) => dispatch(loadUsers(object)),
+  getadmin: (object) => dispatch(loadAdmin(object)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Admin);

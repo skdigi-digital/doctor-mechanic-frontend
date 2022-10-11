@@ -49,6 +49,8 @@ export class LoginUsers extends Component {
 
   componentDidMount() {
     const { getUser, Login } = this.props;
+    console.log("propssssssssssssss",this.props); 
+
     getUser({ token: Login.data.response.token });
     this.setState({token:Login.data.response.token })
   }
