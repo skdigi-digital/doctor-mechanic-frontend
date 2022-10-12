@@ -2,38 +2,32 @@ import Admindetails from "./adminmodel";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Datatable from "../../components/datatable";
-import { loadEmployees } from "../../store/actions/employees";
+import { loadAdmin } from "../../store/actions/admin";
 // import DeleteModal from "../../components/deletemodal/deleteModal";
 // import axios from "axios";
 // import { deleteNotificationApi } from "../../constant";
 const headers = [
   {
-    id: "firstName",
+    id: "username",
     numeric: false,
     disablePadding: true,
-    label: "Name",
-  },
-  {
-    id: "lastName",
-    numeric: false,
-    disablePadding: true,
-    label: "Description",
-  },
-  {
-    id: "phoneNumber",
-    numeric: true,
-    disablePadding: false,
-    label: "phoneNumber",
+    label: "UserName",
   },
   {
     id: "email",
+    numeric: false,
+    disablePadding: true,
+    label: "Email",
+  },
+  {
+    id: "createddt",
     numeric: true,
     disablePadding: false,
-    label: "email",
+    label: "Created On",
   },
 ];
 
-export class LoginUsers extends Component {
+export class Admin extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -53,10 +47,12 @@ export class LoginUsers extends Component {
   }
 
   componentDidMount() {
-    const { getEmployees, Login } = this.props;
-    console.log("propss",this.props); 
-    console.log(Login.data.token);
-    getEmployees({ token: Login.data.token });
+    const { getadmin, Login } = this.props;
+    console.log("propssssssssssssss",this.props); 
+    if (Login.data.response.status === 200) {
+      getadmin({ token: Login.data.response.token });
+    } 
+    
   }
 
   ordersClick = (value, selected, name) => {
@@ -157,7 +153,8 @@ export class LoginUsers extends Component {
   };
 
   render() {
-    const { Employees } = this.props;
+    const { Admin } = this.props;
+    console.log("Im the admin",Admin)
     const {
       open,
       selected,
@@ -174,7 +171,7 @@ export class LoginUsers extends Component {
         <Datatable
           name="Admin"
           headCell={headers}
-          data={Employees.data}
+          data={Admin.data}
           handleButtonClick={this.ordersClick}
           selectEmpty={selectBol}
           handleSelectEmpty={(value) => this.setState({ selectBol: value })}
@@ -203,13 +200,13 @@ export class LoginUsers extends Component {
   }
 }
 
-const mapStateToProps = ({ Employees, Login }) => ({
-  Employees,
+const mapStateToProps = ({ Admin, Login }) => ({
+  Admin,
   Login,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getEmployees: (object) => dispatch(loadEmployees(object)),
+  getadmin: (object) => dispatch(loadAdmin(object)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginUsers);
+export default connect(mapStateToProps, mapDispatchToProps)(Admin);

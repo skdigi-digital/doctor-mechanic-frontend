@@ -27,9 +27,8 @@ export const admin = [
   {
     id: 5,
     name: "Vendor",
-    icon: "",
+    icon: "add_business",
     path: "/vendor",
-
   },
   {
     id: 6,
@@ -40,7 +39,7 @@ export const admin = [
   {
     id: 7,
     name: "Notification",
-    icon: "",
+    icon: "notifications_none",
     path: "/notification",
   },
 ];
@@ -54,43 +53,28 @@ export const vendor = [
   },
   {
     id: 2,
-    name: "ADMIN",
-    icon: "admin_panel_settings",
-    path: "/notification",
-  },
-
-  {
-    id: 3,
     name: "DEALER",
     icon: "supervisor_account",
-    path: "/notification",
+    path: "/dealer",
   },
   {
-    id: 4,
+    id: 3,
     name: "EMPLOYEE",
     icon: "assignment_ind",
     path: "/vendor",
   },
   {
-    id: 5,
-    name: "USER",
-    icon: "person",
-    path: "/notification",
-  },
-
-  {
-    id: 7,
+    id: 4,
     name: "CUSTOMER",
     icon: "contact_page",
     path: "/vendor",
   },
   {
-    id: 8,
+    id: 5,
     name: "BIKE",
     icon: "two_wheeler",
     path: "/notification",
   },
-
   {
     id: 6,
     name: "SERVICE",
@@ -98,32 +82,32 @@ export const vendor = [
     path: "/vendor",
   },
   {
-    id: 10,
+    id: 7,
     name: "MANUFACTURER",
     icon: "warehouse",
     path: "/vendor",
   },
   {
-    id: 9,
+    id: 8,
     name: "ADDITIONAL OPTIONAL",
     icon: "add_box",
     path: "/vendor",
   },
 
   {
-    id: 13,
+    id: 9,
     name: "BANNER",
     icon: "image",
     path: "/vendor",
   },
   {
-    id: 11,
+    id: 10,
     name: "LOCATIONS",
     icon: "my_locations",
     path: "/notification",
   },
   {
-    id: 12,
+    id: 11,
     name: "OFFER",
     icon: "sell",
     path: "/notification",

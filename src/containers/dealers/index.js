@@ -1,11 +1,11 @@
-import Userdetails from "./Usersdetails";
+import Dealerdetails from "./Dealerdeatils";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Datatable from "../../components/datatable";
-import { loadUsers } from "../../store/actions/users";
+import { loadDealer } from "../../store/actions/dealer";
 import DeleteModal from "../../components/deletemodal/deleteModal";
 import axios from "axios";
-import { deleteNotificationApi } from "../../constant";
+import { deletedealer } from "../../constant";
 const headers = [
   {
     id: "first_name",
@@ -14,20 +14,28 @@ const headers = [
     label: "First_Name",
   },
   {
-    id: "phone",
-    numeric: false,
-    disablePadding: true,
-    label: "Phone",
-  },
-  {
     id: "email",
     numeric: false,
     disablePadding: true,
-    label: " Email",
+    label: "Email",
+  },
+
+  {
+    id: "state",
+    numeric: false,
+    disablePadding: true,
+    label: "State",
+  },
+  
+  {
+    id: "city",
+    numeric: false,
+    disablePadding: true,
+    label: "City",
   },
 ];
 const display = "visible";
-export class LoginUsers extends Component {
+export class Dealer extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -48,22 +56,23 @@ export class LoginUsers extends Component {
   }
 
   componentDidMount() {
-    const { getUser, Login } = this.props;
-    console.log("propssssssssssssss",this.props); 
-
-    getUser({ token: Login.data.response.token });
-    this.setState({token:Login.data.response.token })
+    const { getDealer, Vendorlogin } = this.props;
+    if (Vendorlogin.data.status === 200) {
+    getDealer({ token: Vendorlogin.data.token });
+    }
+    console.log("Im the token",Vendorlogin.data.token);
   }
   componentDidUpdate()
   {
     const {errorType} = this.state;
-    const {getUser,Login} = this.props;
+    const {getDealer,Vendorlogin} = this.props;
     if(errorType != ""){
-    getUser({token: Login.data.response.token});
+        getDealer({token: Vendorlogin.data.token});
     this.setState({errorType: ""})
     }
   }
 
+    
   ordersClick = (value, selected, name) => {
     this.setState({ [value]: true }, () => {
       if (value === "add") {
@@ -82,25 +91,26 @@ export class LoginUsers extends Component {
   deletenotification = async () => {
     this.setState({ deleteBackdrop: true });
     try {
-      const { Login } = this.props;
+      const { Vendorlogin } = this.props;
       const headers = {
         "Content-Type": "application/x-www-form-urlencoded",
-        token: Login.data.response.token,
+        token: Vendorlogin.data.token,
       };
+
       const notification = {
-        customer_id: this.state.selected[0],
+        dealer_id: this.state.selected[0],
       };
+      
       const data = Object.keys(notification)
         .map((key) => `${key}=${encodeURIComponent(notification[key])}`)
         .join("&");
 
       const notificationDelete = await axios({
         method: "delete",
-        url: deleteNotificationApi,
+        url: deletedealer,
         data: data,
         headers: headers,
       });
-
       if (notificationDelete.data.status === 200) {
         this.setState({
           deleteBackdrop: false,
@@ -108,7 +118,6 @@ export class LoginUsers extends Component {
           message: notificationDelete.data.message,
           alert: true,
         });
-        //getNotificationsList({ token: Login.data.response.token });
         this.handleDeleteModal(false);
       } else if (
         notificationDelete.data.status === 201 ||
@@ -132,7 +141,7 @@ export class LoginUsers extends Component {
       this.setState({
         deleteBackdrop: false,
         errorType: "error",
-        message: "Error!, Please contact your Administrator!!" + error,
+        message: "Error!, Please contact your Administrator!!",
         alert: true,
       });
     }
@@ -161,7 +170,7 @@ export class LoginUsers extends Component {
   };
 
   render() {
-    const { Users } = this.props;
+    const { Dealer } = this.props;
     const {
       open,
       selected,
@@ -174,25 +183,24 @@ export class LoginUsers extends Component {
       selectBol,
       token,
     } = this.state;
-    console.log("Vendorlist",this.props)
     return (
       <div style={{ marginTop: 30 }}>
         <Datatable
-          name="Users"
+          name="Dealer"
           headCell={headers}
-          data={Users.data}
+          data={Dealer.data}
           handleButtonClick={this.ordersClick}
           selectEmpty={selectBol}
           handleSelectEmpty={(value) => this.setState({ selectBol: value })}
           displayaddbutton={display}
         />
 
-         <Userdetails
+        <Dealerdetails
           openModel={open}
           handleModelClose={this.handleModal}
           selected={selected}
           token={token}
-        />  
+        />
         <DeleteModal
           openModal={deleteModal}
           name={selectedName}
@@ -210,13 +218,14 @@ export class LoginUsers extends Component {
   }
 }
 
-const mapStateToProps = ({ Users, Login }) => ({
-  Users,
-  Login,
+const mapStateToProps = ({ Dealer, Login,Vendorlogin }) => ({
+    Dealer,
+    Vendorlogin,
+    Login,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  getUser: (object) => dispatch(loadUsers(object)),
+  getDealer: (object) => dispatch(loadDealer(object)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginUsers);
+export default connect(mapStateToProps, mapDispatchToProps)(Dealer);

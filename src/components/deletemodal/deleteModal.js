@@ -24,7 +24,7 @@ import { connect } from "react-redux";
 // import { addStoresApi } from "../../constant";
 import { adddoctorApi, editDoctorApi, uploadImageUrl } from "../../constant";
 // import { loadStores } from "../../store/actions/stores";
-import { loadDoctors } from "../../store/actions/doctors";
+//import { loadDoctors } from "../../store/actions/doctors";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import Grid from "@mui/material/Grid";

@@ -28,8 +28,7 @@ import Grid from "@mui/material/Grid";
 // web.cjs is required for IE11 support
 import { useSpring, animated } from "react-spring";
 import { adduserApi } from "../../constant";
-import { loadUsers } from "../../store/actions/users";
-import { loadEmployees } from "../../store/actions/employees";
+import { loadAdmin } from "../../store/actions/admin";
 
 const Fade = React.forwardRef(function Fade(props, ref) {
   const { in: open, children, onEnter, onExited, ...other } = props;
@@ -100,7 +99,7 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-function Employeedetails(props) {
+function Admindetails(props) {
   const [adminObject, setAdminObject] = React.useState({
     Email_ID: "",
     Password: "",
@@ -116,7 +115,7 @@ function Employeedetails(props) {
   const [errorType, setErrorType] = React.useState("");
   const [message, setMessage] = React.useState("");
 
-  const { openModel, handleModelClose, getEmployees, Login } = props;
+  const { openModel, handleModelClose, getAdmin, Login } = props;
   const vertical = "bottom";
   const horizontal = "center";
   const theme = useTheme();
@@ -152,7 +151,7 @@ function Employeedetails(props) {
       });
 
       if (addEmployee.data.status === 200) {
-        getEmployees({ token: Login.data.token });
+        getAdmin({ token: Login.data.token });
         setBackdropOpen(false);
         handleClose();
         setErrorType("success");
@@ -355,10 +354,10 @@ function Employeedetails(props) {
   );
 }
 
-const mapStateToProps = ({ Login, Course }) => ({ Login, Course });
+const mapStateToProps = ({ Login, Admin }) => ({ Login, Admin });
 
 const mapDispatchToProps = (dispatch) => ({
-  getEmployees: (object) => dispatch(loadEmployees(object)),
+  getAdmin: (object) => dispatch(loadAdmin(object)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Employeedetails);
+export default connect(mapStateToProps, mapDispatchToProps)(Admindetails);

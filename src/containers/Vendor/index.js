@@ -3,27 +3,28 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import Datatable from "../../components/datatable";
 import { loadVendors } from "../../store/actions/vendorlist";
-// import DeleteModal from "../../components/deletemodal/deleteModal";
-// import axios from "axios";
+import { deleteVendor } from "../../constant";
+import DeleteModal from "../../components/deletemodal/deleteModal";
+import axios from "axios";
 // import { deleteNotificationApi } from "../../constant";
 const headers = [
   {
-    id: "title",
+    id: "name",
     numeric: false,
     disablePadding: true,
-    label: "Title",
+    label: "First_Name",
+  },
+  {
+    id: "phone",
+    numeric: false,
+    disablePadding: true,
+    label: "Phone",
   },
   {
     id: "email",
     numeric: false,
     disablePadding: true,
-    label: "Email",
-  },
-  {
-    id: "servic_types",
-    numeric: false,
-    disablePadding: true,
-    label: "Service Types",
+    label: " Email",
   },
 ];
 const display = "visible";
@@ -49,9 +50,19 @@ export class Vendors extends Component {
 
   componentDidMount() {
     const { getVendorlist, Login } = this.props;
-
-    if (Login.data.status === 200) {
-      getVendorlist({ token: Login.data.token });
+    
+    if (Login.data.response.status === 200) {
+      console.log("Vendorlist",Login.data.status)
+      getVendorlist({ token: Login.data.response.token });
+    }
+  }
+  componentDidUpdate()
+  {
+    const {errorType} = this.state;
+    const {getVendorlist,Login} = this.props;
+    if(errorType != ""){
+      getVendorlist({token: Login.data.response.token});
+    this.setState({errorType: ""})
     }
   }
 
@@ -70,65 +81,66 @@ export class Vendors extends Component {
       }
     });
   };
-  // deletenotification = async () => {
-  //   this.setState({ deleteBackdrop: true });
-  //   try {
-  //     const { Login, getNotificationsList } = this.props;
-  //     const headers = {
-  //       "Content-Type": "application/x-www-form-urlencoded",
-  //       token: Login.data.token,
-  //     };
+  deletenotification = async () => {
+    this.setState({ deleteBackdrop: true });
+    try {
+      const { Login } = this.props;
+      const headers = {
+        "Content-Type": "application/x-www-form-urlencoded",
+        token: Login.data.response.token,
+      };
 
-  //     const notification = {
-  //       notification_id: this.state.selected[0],
-  //     };
+      const notification = {
+        service_id: this.state.selected[0],
+      };
+      console.log("Deleting id",this.state.selected[0])
 
-  //     const data = Object.keys(notification)
-  //       .map((key) => `${key}=${encodeURIComponent(notification[key])}`)
-  //       .join("&");
+      const data = Object.keys(notification)
+        .map((key) => `${key}=${encodeURIComponent(notification[key])}`)
+        .join("&");
 
-  //     const notificationDelete = await axios({
-  //       method: "post",
-  //       url: deleteNotificationApi,
-  //       data: data,
-  //       headers: headers,
-  //     });
-  //     if (notificationDelete.data.status === 200) {
-  //       this.setState({
-  //         deleteBackdrop: false,
-  //         errorType: "success",
-  //         message: notificationDelete.data.message,
-  //         alert: true,
-  //       });
-  //       getNotificationsList({ token: Login.data.token });
-  //       this.handleDeleteModal(false);
-  //     } else if (
-  //       notificationDelete.data.status === 201 ||
-  //       notificationDelete.data.status === 500
-  //     ) {
-  //       this.setState({
-  //         deleteBackdrop: false,
-  //         errorType: "error",
-  //         message: notificationDelete.data.message,
-  //         alert: true,
-  //       });
-  //     } else {
-  //       this.setState({
-  //         deleteBackdrop: false,
-  //         errorType: "error",
-  //         message: "Error!, Please contact your Administrator!!",
-  //         alert: true,
-  //       });
-  //     }
-  //   } catch (error) {
-  //     this.setState({
-  //       deleteBackdrop: false,
-  //       errorType: "error",
-  //       message: "Error!, Please contact your Administrator!!",
-  //       alert: true,
-  //     });
-  //   }
-  // };
+      const notificationDelete = await axios({
+        method: "delete",
+        url: deleteVendor,
+        data: data,
+        headers: headers,
+      });
+      if (notificationDelete.data.status === 200) {
+        this.setState({
+
+          deleteBackdrop: false,
+          errorType: "success",
+          message: notificationDelete.data.message,
+          alert: true,
+        });
+        this.handleDeleteModal(false);
+      } else if (
+        notificationDelete.data.status === 201 ||
+        notificationDelete.data.status === 500
+      ) {
+        this.setState({
+          deleteBackdrop: false,
+          errorType: "error",
+          message: notificationDelete.data.message,
+          alert: true,
+        });
+      } else {
+        this.setState({
+          deleteBackdrop: false,
+          errorType: "error",
+          message: "Error!, Please contact your Administrator!!",
+          alert: true,
+        });
+      }
+    } catch (error) {
+      this.setState({
+        deleteBackdrop: false,
+        errorType: "error",
+        message: "Error!, Please contact your Administrator!!",
+        alert: true,
+      });
+    }
+  };
   handleModal = (value) => {
     this.setState({ open: value }, () => {
       if (this.state.open === false) {
@@ -182,7 +194,7 @@ export class Vendors extends Component {
           handleModelClose={this.handleModal}
           selected={selected}
         />
-        {/* <DeleteModal
+        <DeleteModal
           openModal={deleteModal}
           name={selectedName}
           backdropOpen={deleteBackdrop}
@@ -193,7 +205,7 @@ export class Vendors extends Component {
           errorType={errorType}
           message={message}
           alert={alert}
-        /> */}
+        />
       </div>
     );
   }
@@ -206,7 +218,7 @@ const mapStateToProps = ({ Vendorlist, Login }) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getVendorlist: (object) => dispatch(loadVendors(object)),
-  //getNotificationsList: (object) => dispatch(loadNotifications(object)),
+  
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Vendors);
