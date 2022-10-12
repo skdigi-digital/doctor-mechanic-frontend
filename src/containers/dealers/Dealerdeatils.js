@@ -191,7 +191,7 @@ function Dealerdetails(props) {
                     headers: headers,
                 });
                 if (updatedealer.data.status === 200) {
-                    getDealer({ token: vendorlogin.data.response.token });
+                    getDealer({ token: Vendorlogin.data.token });
                     setBackdropOpen(false);
                     handleClose();
                     setErrorType("success");
@@ -357,7 +357,7 @@ function Dealerdetails(props) {
 • City• Price */}
                 <Fade in={openModel}>
                     <BootstrapDialogTitle onClose={handleClose}>
-                        Service
+                        Dealers
                     </BootstrapDialogTitle>
                     <DialogContent>
                         <Box style={{ margin: 10 }}>
